@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IBUISC'26 · The Road</title>
+<link rel="icon" href="../favicon/favicon-32x32.png">
+<link rel="stylesheet" href="site.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--red:#d8002e;--deep:#970121;--cream:#f3f1ec;--ink:#0e0f12}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--cream);font-family:"Inter Tight",sans-serif}
+  nav{position:fixed;inset:0 0 auto 0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:24px 48px;font-size:14px}
+  nav .links{display:flex;gap:30px;opacity:.7}
+  .btn{background:var(--red);color:#fff;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:500}
+  .intro{height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 48px 60px}
+  .intro .lbl{font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:#ff5a76}
+  .intro h1{font-size:14vw;font-weight:900;letter-spacing:-.06em;line-height:.8;margin-top:16px}
+  .intro h1 span{color:var(--red)}
+  .intro .hint{margin-top:30px;display:flex;justify-content:space-between;font-size:14px;opacity:.6;letter-spacing:.1em;text-transform:uppercase}
+  .h-scene{height:500vh;position:relative}
+  .h-sticky{position:sticky;top:0;height:100vh;overflow:hidden}
+  .h-track{display:flex;height:100%;will-change:transform}
+  .panel{flex:0 0 100vw;height:100%;position:relative;padding:120px 64px 80px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+  .panel:nth-child(1){background:var(--ink)}
+  .panel:nth-child(2){background:var(--red)}
+  .panel:nth-child(3){background:var(--cream);color:var(--ink)}
+  .panel:nth-child(4){background:var(--deep)}
+  .panel:nth-child(5){background:var(--ink)}
+  .step{font-size:14px;letter-spacing:.3em;text-transform:uppercase;font-weight:500;opacity:.75}
+  .big{font-size:30vw;font-weight:900;letter-spacing:-.07em;line-height:.75;position:absolute;right:-2vw;bottom:-4vw;opacity:.12;pointer-events:none}
+  .panel h2{font-size:9vw;font-weight:900;letter-spacing:-.05em;line-height:.88;max-width:70%}
+  .row{display:flex;justify-content:space-between;align-items:flex-end;gap:40px}
+  .date{font-size:48px;font-weight:800;letter-spacing:-.03em}
+  .date small{display:block;font-size:13px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;opacity:.7;margin-bottom:6px}
+  .cd{display:flex;gap:10px}
+  .cd div{background:rgba(0,0,0,.25);border-radius:16px;padding:16px 18px;min-width:96px;text-align:center;font-size:44px;font-weight:800;font-variant-numeric:tabular-nums}
+  .cd small{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;opacity:.75}
+  .panel:nth-child(3) .cd div{background:rgba(14,15,18,.07)}
+  .status{display:inline-block;margin-top:18px;padding:8px 14px;border-radius:999px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;background:var(--cream);color:var(--red)}
+  .progress{position:absolute;left:64px;right:64px;top:92px;height:3px;background:rgba(255,255,255,.15);z-index:10}
+  .progress i{display:block;height:100%;width:0;background:var(--cream)}
+  .dots{position:absolute;left:64px;right:64px;top:84px;display:flex;justify-content:space-between;z-index:11;font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+  .dots span{padding-top:20px;opacity:.6}
+  .end{height:80vh;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:800}
+  nav a{color:inherit;text-decoration:none}
+  @media (max-width:880px){nav .links{display:none}nav{padding:18px 20px!important}}
+  html{scroll-behavior:smooth}
+  nav{background:linear-gradient(rgba(14,15,18,.9),transparent)}
+  @media (max-width:760px){.panel{padding:110px 20px 60px}.panel h2{font-size:12vw;max-width:100%}.row{flex-direction:column;align-items:flex-start}.date{font-size:30px}.cd div{min-width:64px;font-size:26px;padding:10px}.dots{display:none}.progress{left:20px;right:20px}}
+  /* full site: after the road, the stops alternate red, cream and ink like the panels */
+  .s-root{--s-bg:var(--ink);--s-bg2:var(--cream);--s-display:"Inter Tight",sans-serif;--s-h2:clamp(52px,8vw,132px);--s-h2ls:-.06em;--s-r:16px}
+  .s-alt{--s-fg:var(--ink);--s-soft:#5d5f66;--s-line:rgba(14,15,18,.14);--s-card:#fff;--s-chip:rgba(14,15,18,.05);color:var(--ink)}
+  .s-sec-topics,.s-sec-submit{background:var(--red)!important;--s-fg:var(--cream);--s-soft:rgba(243,241,236,.78);--s-line:rgba(243,241,236,.28);--s-card:rgba(0,0,0,.14);--s-chip:rgba(0,0,0,.16);--s-accent:var(--cream);--s-accent-fg:var(--red)}
+  .s-root .s-n{display:block;position:absolute;right:0;top:-40px;font-size:clamp(120px,18vw,260px);font-weight:900;letter-spacing:-.07em;line-height:.8;opacity:.1}
+  html,body{overflow-x:clip}
+  .intro{position:relative;overflow:hidden}
+  .intro>*:not(.roads){position:relative;z-index:1}
+  .roads{position:absolute;inset:0;width:100%;height:100%}
+  .road path{fill:none;stroke:#1d1f25;stroke-width:58;stroke-linecap:round;stroke-dasharray:1800;stroke-dashoffset:1800;animation:draw 1.6s cubic-bezier(.5,0,.2,1) forwards}
+  .road path.lane{stroke:rgba(243,241,236,.38);stroke-width:3;stroke-dasharray:18 16;stroke-dashoffset:0;opacity:0;animation:fade .6s 1.3s forwards}
+  .road:nth-child(2) path{animation-delay:.2s}.road:nth-child(3) path{animation-delay:.4s}
+  .sign{opacity:0;animation:fade .5s var(--d) forwards}
+  .sign rect{fill:var(--red)}
+  .sign text{fill:#fff;font:600 17px "Inter Tight";text-anchor:middle}
+  .junction{opacity:0;animation:fade .5s 1.5s forwards}
+  .junction circle{fill:var(--red);stroke:var(--ink);stroke-width:5}
+  .junction .pulse{fill:none;stroke:var(--red);stroke-width:3;transform-box:fill-box;transform-origin:center;animation:pulse 2.4s 1.8s ease-out infinite}
+  .junction text{fill:var(--cream);font:600 18px "Inter Tight";text-anchor:middle;letter-spacing:.04em}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes fade{to{opacity:1}}
+  @keyframes pulse{from{transform:scale(1);opacity:.9}to{transform:scale(3.2);opacity:0}}
+  @media (prefers-reduced-motion:reduce){.road path,.sign,.junction{animation:none;opacity:1;stroke-dashoffset:0}.road path.lane{opacity:1}.junction .pulse{display:none}}
+  @media (max-width:760px){.sign{display:none}.intro h1{font-size:15vw}}
+  .s-root .s-head p{margin-left:0;flex-basis:100%}
+</style>
+</head>
+<body>
+<nav><strong style="font-weight:900">IBUISC ’26</strong><div class="links"><a href="#about">About</a><a href="#topics">Topics</a><a href="#agenda">Agenda</a><a href="#committees">Committees</a></div><a class="btn" href="#submit">Submit Abstract</a></nav>
+<section class="intro">
+  <svg class="roads" id="roads" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g class="road"><path d="M-40 170 C300 170 640 300 1020 330"/><path class="lane" d="M-40 170 C300 170 640 300 1020 330"/></g>
+    <g class="road"><path d="M1180 -40 C1150 120 1060 230 1020 330"/><path class="lane" d="M1180 -40 C1150 120 1060 230 1020 330"/></g>
+    <g class="road"><path d="M1480 700 C1300 640 1140 470 1020 330"/><path class="lane" d="M1480 700 C1300 640 1140 470 1020 330"/></g>
+    <g class="sign" style="--d:.9s"><rect x="120" y="96" width="232" height="40" rx="6"/><text x="236" y="122">Artificial Intelligence</text></g>
+    <g class="sign" style="--d:1.1s"><rect x="1210" y="150" width="168" height="40" rx="6"/><text x="1294" y="176">Sustainability</text></g>
+    <g class="sign" style="--d:1.3s"><rect x="1190" y="540" width="200" height="40" rx="6"/><text x="1290" y="566">Future of Society</text></g>
+    <g class="junction"><circle class="pulse" cx="1020" cy="330" r="16"/><circle cx="1020" cy="330" r="16"/><text x="1020" y="392">Skopje · 2–3 December 2026</text></g>
+  </svg>
+  <div class="lbl">International Student Congress · Skopje · 2026</div>
+  <h1>Youth at the<br><span>Crossroads.</span></h1>
+  <div class="hint"><span>Three roads. Four milestones. One congress.</span><span>Scroll ↓</span></div>
+</section>
+<section class="h-scene" id="hs">
+  <div class="h-sticky">
+    <div class="progress"><i id="bar"></i></div>
+    <div class="dots"><span>Start</span><span>Abstract</span><span>Notification</span><span>Full paper</span><span>Congress</span></div>
+    <div class="h-track" id="track">
+      <div class="panel"><div class="step">00 — Your idea</div><h2>Every big idea starts with an abstract.</h2><div class="row"><div class="date"><small>Max 350 words</small>English · .docx</div><a class="btn" href="#guidelines">Read the guidelines</a></div><div class="big">00</div></div>
+      <div class="panel"><div class="step">01 — Abstract submission</div><h2>Send us your abstract.</h2><div class="row"><div class="date"><small>Deadline</small>October 30, 2026<br><span class="status">Open now</span></div><div class="cd" data-to="2026-10-30"></div></div><div class="big">01</div></div>
+      <div class="panel"><div class="step">02 — Notification</div><h2>Hear back from the board.</h2><div class="row"><div class="date"><small>Notification of acceptance</small>November 3, 2026</div><div class="cd" data-to="2026-11-03"></div></div><div class="big">02</div></div>
+      <div class="panel"><div class="step">03 — Full paper</div><h2>Publish with an ISBN.</h2><div class="row"><div class="date"><small>Full paper deadline</small>November 12, 2026</div><div class="cd" data-to="2026-11-12"></div></div><div class="big">03</div></div>
+      <div class="panel"><div class="step">04 — The congress</div><h2>Take the stage in Skopje.</h2><div class="row"><div class="date"><small>Blue Amphi · IBU</small>December 2–3, 2026</div><div class="cd" data-to="2026-12-02"></div></div><div class="big">04</div></div>
+    </div>
+  </div>
+</section>
+<div class="s-root" id="site"></div>
+<script>
+// on narrow screens frame the junction instead of the whole map
+const fitRoads=()=>document.getElementById('roads').setAttribute('viewBox',innerWidth<760?'800 40 480 820':'0 0 1440 900');fitRoads();addEventListener('resize',fitRoads);
+const hs=document.getElementById('hs'),track=document.getElementById('track'),bar=document.getElementById('bar');
+function onScroll(){
+  const r=hs.getBoundingClientRect(),max=hs.offsetHeight-innerHeight;
+  const p=Math.min(1,Math.max(0,-r.top/max));
+  track.style.transform=`translateX(${-p*(track.scrollWidth-innerWidth)}px)`;
+  bar.style.width=(p*100)+'%';
+}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+function tick(){
+  document.querySelectorAll('.cd').forEach(el=>{
+    let d=Math.max(0,new Date(el.dataset.to+'T23:59:59')-new Date());
+    const D=Math.floor(d/864e5),H=Math.floor(d/36e5)%24,M=Math.floor(d/6e4)%60,S=Math.floor(d/1e3)%60;
+    el.innerHTML=[[D,'Days'],[H,'Hrs'],[M,'Min'],[S,'Sec']].map(([v,l])=>`<div>${String(v).padStart(2,'0')}<small>${l}</small></div>`).join('');
+  });
+}
+tick();setInterval(tick,1000);
+</script>
+<script src="data.js"></script>
+<script src="site.js"></script>
+<script>IBUISC.site(document.getElementById("site"), { skip: ["deadlines"] });</script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IBUISC'26 · Group Chat</title>
+<link rel="icon" href="../favicon/favicon-32x32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<style>
+:root{--red:#d8002e;--ink:#121113;--paper:#f4f3f1;--soft:#626066;--bub:#e9e8ec}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Instrument Sans",sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.top{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:16px;padding:14px clamp(16px,4vw,48px);background:var(--paper)}
+.logo{font-weight:700;font-size:20px;text-decoration:none}
+.top nav{margin-left:auto;display:flex;gap:2px}
+.top nav a{text-decoration:none;font-weight:600;font-size:15px;padding:7px 12px;border-radius:999px}
+.top nav a:hover{background:#e6e5e2}
+.top .go{background:var(--red);color:#fff}
+.top .go:hover{background:var(--ink)}
+@media (max-width:880px){.top nav a:not(.go){display:none}}
+
+/* hero: a headline and a phone with the congress group chat */
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) auto;gap:clamp(32px,6vw,96px);align-items:center;max-width:1280px;margin:0 auto;padding:24px clamp(16px,4vw,48px) 40px;min-height:calc(100vh - 64px)}
+.copy .pre{font-weight:600;color:var(--soft);font-size:15px}
+.copy h1{font-family:"Instrument Serif",serif;font-weight:400;font-size:clamp(56px,8vw,128px);line-height:.88;letter-spacing:-.02em;margin:14px 0 18px}
+.copy h1 em{color:var(--red)}
+.copy .theme{font-size:clamp(18px,1.5vw,21px);line-height:1.4;max-width:34ch}
+.copy .when{display:flex;gap:28px;flex-wrap:wrap;margin:22px 0 26px;font-size:15px;color:var(--soft)}
+.copy .when b{display:block;color:var(--ink);font-size:20px;font-weight:700}
+.btn{display:inline-flex;font:inherit;font-weight:700;font-size:16px;padding:12px 22px;border-radius:999px;text-decoration:none;border:1.5px solid var(--ink);background:none;cursor:pointer;color:var(--ink)}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff}
+.btn:hover{background:var(--ink);border-color:var(--ink);color:#fff}
+
+.phone{--ph:clamp(560px,calc(100vh - 110px),800px);position:relative;height:var(--ph);width:calc(var(--ph) * 9 / 18.5);max-width:100%;justify-self:center;background:#0d0c0e;border-radius:52px;padding:12px;box-shadow:0 50px 90px -40px rgba(18,17,19,.6),inset 0 0 0 2px #2a282c;transform:rotate(2.5deg)}
+.screen{position:relative;height:100%;border-radius:41px;background:#fff;overflow:hidden;display:flex;flex-direction:column}
+.notch{position:absolute;left:50%;top:10px;width:110px;height:30px;border-radius:20px;background:#0d0c0e;transform:translateX(-50%);z-index:3}
+.chead{padding:48px 16px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #eee;background:rgba(255,255,255,.95)}
+.av{width:38px;height:38px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.chead b{display:block;font-size:15px}
+.chead span{font-size:12.5px;color:var(--soft)}
+.msgs{flex:1;overflow-y:auto;padding:14px 12px 8px;display:flex;flex-direction:column;gap:6px;scroll-behavior:smooth;overscroll-behavior:contain}
+.m{max-width:82%;padding:9px 13px;border-radius:20px;font-size:14.5px;line-height:1.38;animation:pop .28s cubic-bezier(.2,.9,.3,1.3)}
+.m.them{align-self:flex-start;background:var(--bub);border-bottom-left-radius:6px}
+.m.me{align-self:flex-end;background:var(--red);color:#fff;border-bottom-right-radius:6px}
+.m .who{display:block;font-size:11.5px;font-weight:700;color:var(--red);margin-bottom:2px}
+.m a{font-weight:700}
+.m.card{background:#fff;box-shadow:0 0 0 1px #e3e2e6;padding:0;overflow:hidden;width:82%}
+.m.card .cb{padding:10px 13px}
+.m.card .big{display:block;font-family:"Instrument Serif";font-size:26px;line-height:1}
+.m.card .bar{height:6px;background:#eee}
+.m.card .bar i{display:block;height:100%;background:var(--red)}
+.typing{align-self:flex-start;background:var(--bub);border-radius:20px;padding:12px 14px;display:flex;gap:4px}
+.typing i{width:7px;height:7px;border-radius:50%;background:#9a98a0;animation:dot 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,60%,100%{transform:none;opacity:.5}30%{transform:translateY(-4px);opacity:1}}
+@keyframes pop{from{transform:scale(.85) translateY(6px);opacity:0}}
+.time{align-self:center;font-size:11.5px;color:var(--soft);font-weight:600;margin:4px 0}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:8px 10px 18px;border-top:1px solid #eee;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;font:inherit;font-weight:600;font-size:13.5px;padding:8px 12px;border-radius:999px;border:1.5px solid var(--red);background:#fff;color:var(--red);cursor:pointer}
+.chips button:hover{background:var(--red);color:#fff}
+.chips button:disabled{opacity:.4;cursor:default;background:#fff;color:var(--red)}
+@media (max-width:900px){.hero{grid-template-columns:1fr;min-height:0}.phone{transform:none;--ph:640px}}
+
+/* full site: calm, editorial; the chat voice returns in the section notes */
+.s-root{--s-bg:var(--paper);--s-bg2:#fff;--s-fg:var(--ink);--s-soft:var(--soft);--s-line:rgba(18,17,19,.12);--s-card:#fff;--s-chip:rgba(18,17,19,.05);
+  --s-display:"Instrument Serif",serif;--s-h2:clamp(56px,7.6vw,124px);--s-h2w:400;--s-h2ls:-.02em;--s-r:20px}
+.s-root .s-head h2{line-height:.9}
+.s-root .s-date,.s-root .s-stats b,.s-root .s-panel h3,.s-root .s-card h3,.s-root .s-news h3,.s-root .s-big{font-weight:400}
+.s-root .s-countries h4,.s-root .s-tech h4{font-family:"Instrument Sans";font-weight:700}
+.s-root .s-head p{background:var(--bub);padding:10px 15px;border-radius:20px 20px 20px 6px;color:var(--ink);font-size:15.5px}
+.s-root .s-alt .s-head p{background:#efeef2}
+.s-root .s-tabs button[aria-selected=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.m{animation:none}.typing i{animation:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="logo" href="#">IBUISC'26</a>
+  <nav aria-label="Sections"><a href="#about">About</a><a href="#topics">Topics</a><a href="#agenda">Agenda</a><a href="#committees">Committees</a><a class="go" href="#submit">Submit</a></nav>
+</header>
+<main>
+<section class="hero">
+  <div class="copy">
+    <p class="pre">International Balkan University presents · International Student Congress 2026</p>
+    <h1>Youth at the <em>Crossroads</em></h1>
+    <p class="theme">Artificial Intelligence, Sustainability, and the Future of Society.</p>
+    <div class="when"><span><b>2–3 December 2026</b>Wednesday & Thursday</span><span><b>Skopje</b>International Balkan University</span></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn red" href="#submit">Submit your work</a><a class="btn" href="#agenda">See the agenda</a></div>
+  </div>
+  <div class="phone" aria-label="The IBUISC'26 group chat. Tap a reply to ask a question.">
+    <div class="screen">
+      <span class="notch" aria-hidden="true"></span>
+      <div class="chead"><span class="av" aria-hidden="true">ISC</span><div><b>IBUISC'26 · Skopje</b><span id="members"></span></div></div>
+      <div class="msgs" id="msgs" role="log" aria-live="polite"></div>
+      <div class="chips" id="chips" aria-label="Replies"></div>
+    </div>
+  </div>
+</section>
+<div class="s-root" id="site"></div>
+</main>
+
+<script src="data.js"></script>
+<script src="site.js"></script>
+<script>
+const D = IBUISC, U = D.util, reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+IBUISC.site(document.getElementById("site"), { titles: {
+  deadlines: ["Key dates", "Set a reminder, the first one is close."],
+  topics: ["Topics", `${U.topicCount()} topics, ${D.faculties.length} faculties. Pick yours.`],
+  agenda: ["Agenda", "Two days. Tap a session to see who's in it."],
+  committees: ["Committees", "The people organising all of this."],
+  news: ["Announcements", "Latest from the congress office."]
+} });
+
+/* ---------- the group chat ---------- */
+const msgs = document.getElementById("msgs"), chipsEl = document.getElementById("chips");
+document.getElementById("members").textContent = `${D.organization.length + D.techTeam.reduce((n, t) => n + t[2].length, 0)} members · organising team`;
+// senders are the congress roles, not invented people
+const WHO = ["Organization Committee", "Technical Team", "Congress Office"];
+const abs = U.countdown(D.deadlines[0].date);
+const say = (html, who = 0, cls = "") => { const m = document.createElement("div"); m.className = `m them ${cls}`; m.innerHTML = `${who >= 0 ? `<span class="who">${WHO[who]}</span>` : ""}${html}`; msgs.appendChild(m); msgs.scrollTop = msgs.scrollHeight; };
+const me = text => { const m = document.createElement("div"); m.className = "m me"; m.textContent = text; msgs.appendChild(m); msgs.scrollTop = msgs.scrollHeight; };
+let queue = Promise.resolve();
+function typed(items) {
+  // each reply: typing dots, a pause that scales with length, then the bubble
+  queue = queue.then(() => items.reduce((p, [html, who, cls]) => p.then(() => new Promise(done => {
+    const t = document.createElement("div"); t.className = "typing"; t.innerHTML = "<i></i><i></i><i></i>"; msgs.appendChild(t); msgs.scrollTop = msgs.scrollHeight;
+    setTimeout(() => { t.remove(); say(html, who, cls); done(); }, reduce ? 0 : Math.min(1400, 450 + html.length * 9));
+  })), Promise.resolve()));
+  return queue;
+}
+const go = id => `<a href="#${id}">${{ topics: "Open the topics", agenda: "Open the agenda", submit: "Open the form", guidelines: "Read the guidelines", deadlines: "See all dates", committees: "See the committees" }[id]}</a>`;
+const ANSWERS = {
+  "What's the theme?": [[`“${D.theme}”`, 0], [`${D.faculties.length} faculties, ${U.topicCount()} topics, from law and economics to art and engineering. ${go("topics")}`, 0]],
+  "When's the deadline?": [[`Abstracts close on <b>${D.deadlines[0].display}</b>.`, 2],
+    [`<div class="cb"><span class="big">${abs.done ? "Closed" : abs.d + " days"}</span>left to send your abstract</div><div class="bar"><i style="width:${Math.max(4, 100 - abs.d / 60 * 100)}%"></i></div>`, -1, "card"],
+    [`Then acceptance on ${D.deadlines[1].display}, full papers by ${D.deadlines[2].display}. ${go("deadlines")}`, 2]],
+  "Who can join?": [["Students from any university and any country. Last year: " + `${D.stats.abstracts} abstracts from ${D.stats.countries} countries.`, 0], [`Abstracts are max 350 words, in English, as a Word file. ${go("guidelines")}`, 1]],
+  "What happens there?": [[`Day 1: ${D.agenda[0].title}. Keynotes, lightning talks, a World Café and a 2035 scenario game.`, 0], [`Day 2: ${D.agenda[1].title}. Five parallel workshops, the IBU Debate and a closing panel. ${go("agenda")}`, 0]],
+  "Is it published?": [["Yes. Accepted papers go into the proceedings with an ISBN, in print and digital.", 2], [`The best ones can appear in the faculty journals too. ${go("guidelines")}`, 2]],
+  "I'm in. How do I submit?": [["Love it. Fill in the form or email us, Word files only.", 1], [`${go("submit")} · <a href="mailto:${D.email}">${D.email}</a>`, 1]]
+};
+function chips() {
+  chipsEl.innerHTML = Object.keys(ANSWERS).map(q => `<button type="button">${q}</button>`).join("");
+}
+chipsEl.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  b.disabled = true; me(b.textContent); typed(ANSWERS[b.textContent]);
+  b.remove(); chipsEl.prepend(b);
+});
+// a link inside the chat scrolls the page, not the chat
+msgs.addEventListener("click", e => { const a = e.target.closest('a[href^="#"]'); if (!a) return; e.preventDefault(); document.querySelector(a.getAttribute("href")).scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); });
+// opening messages
+const t = document.createElement("div"); t.className = "time"; t.textContent = "Today"; msgs.appendChild(t);
+typed([
+  ["hey 👋 are you free on 2–3 December?", 0],
+  ["we're hosting the International Student Congress in Skopje", 0],
+  [`this year's theme: <b>Youth at the Crossroads</b>. AI, sustainability and the future of society`, 0],
+  [abs.done ? "abstracts are closed, but the agenda is out" : `abstracts close in ${abs.d} days, just saying`, 2]
+]).then(chips);
+</script>
+</body>
+</html>

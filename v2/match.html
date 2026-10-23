@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IBUISC'26 · Match</title>
+<link rel="icon" href="../favicon/favicon-32x32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<style>
+:root{--red:#d8002e;--ink:#131215;--paper:#f3f1ee;--soft:#66626a;--line:#e1ded9}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Onest,sans-serif;background:var(--ink);color:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.top{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:16px;padding:14px clamp(16px,4vw,48px);background:var(--ink)}
+.logo{font-family:Unbounded;font-weight:900;font-size:19px;text-decoration:none}
+.top nav{margin-left:auto;display:flex;gap:2px}
+.top nav a{text-decoration:none;font-weight:600;font-size:15px;padding:7px 12px;border-radius:999px;color:#ddd}
+.top nav a:hover{background:#26242a;color:#fff}
+.top .go{background:var(--red);color:#fff}
+@media (max-width:880px){.top nav a:not(.go){display:none}}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:clamp(32px,6vw,96px);align-items:center;max-width:1280px;margin:0 auto;padding:clamp(24px,5vh,48px) clamp(16px,4vw,48px) 64px;min-height:calc(100vh - 64px)}
+.copy .pre{font-weight:600;color:#a9a5ad;font-size:15px}
+.copy h1{font-family:Unbounded;font-weight:900;font-size:clamp(52px,7.4vw,124px);line-height:.9;letter-spacing:-.03em;margin:14px 0 18px;text-transform:uppercase}
+.copy h1 span{color:var(--red)}
+.copy .sub{font-family:Unbounded;font-weight:700;font-size:clamp(20px,2vw,30px);letter-spacing:-.01em;margin:-4px 0 14px}
+.copy .theme{font-size:clamp(17px,1.4vw,20px);line-height:1.45;color:#d9d6dc;max-width:38ch}
+.copy .when{display:flex;gap:26px;flex-wrap:wrap;margin:22px 0 24px;color:#a9a5ad;font-size:14.5px}
+.copy .when b{display:block;color:#fff;font-size:19px}
+.btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:800;font-size:15.5px;padding:12px 22px;border-radius:999px;text-decoration:none;border:2px solid #fff;background:none;cursor:pointer;color:#fff}
+.btn.red{background:var(--red);border-color:var(--red)}
+.btn:hover{background:#fff;border-color:#fff;color:var(--ink)}
+
+/* the deck */
+.deckwrap{position:relative;width:100%;max-width:420px;justify-self:center}
+.filters{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+.filters button{font:inherit;font-weight:700;font-size:13px;padding:7px 12px;border-radius:999px;border:1.5px solid #3a373e;background:none;color:#cfcbd3;cursor:pointer}
+.filters button[aria-pressed=true]{background:#fff;border-color:#fff;color:var(--ink)}
+.deck{position:relative;aspect-ratio:3/4;width:100%}
+.card{position:absolute;inset:0;border-radius:28px;padding:26px 26px 24px;display:flex;flex-direction:column;color:var(--ink);background:#fff;box-shadow:0 30px 60px -30px rgba(0,0,0,.8);touch-action:none;user-select:none;cursor:grab;will-change:transform;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s}
+.card.drag{transition:none;cursor:grabbing}
+.card .fac{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:13.5px}
+.card .fac span:first-child{background:var(--c);color:#fff;padding:5px 11px;border-radius:999px}
+.card .fac span:last-child{color:var(--soft);font-weight:600}
+.card h3{font-family:Unbounded;font-weight:700;font-size:clamp(21px,2vw,27px);line-height:1.18;letter-spacing:-.01em;margin:auto 0 18px}
+.card .tags{display:flex;gap:6px;flex-wrap:wrap}
+.card .tags span{font-weight:700;font-size:12.5px;padding:5px 10px;border-radius:999px;background:var(--paper)}
+.card .big{position:absolute;right:20px;top:58px;font-family:Unbounded;font-weight:900;font-size:110px;line-height:.8;color:var(--c);opacity:.12}
+.stamp{position:absolute;top:30px;font-family:Unbounded;font-weight:900;font-size:26px;padding:6px 12px;border:4px solid;border-radius:10px;opacity:0;pointer-events:none}
+.stamp.yes{left:22px;color:var(--red);transform:rotate(-12deg)}
+.stamp.no{right:22px;color:#777;transform:rotate(12deg)}
+.card:nth-last-child(2){transform:scale(.95) translateY(16px)}
+.card:nth-last-child(3){transform:scale(.9) translateY(32px)}
+.card:nth-last-child(n+4){opacity:0}
+.empty{position:absolute;inset:0;border-radius:28px;border:2px dashed #3a373e;display:grid;place-items:center;text-align:center;padding:30px;color:#a9a5ad}
+.empty b{display:block;font-family:Unbounded;color:#fff;font-size:22px;margin-bottom:8px}
+.ctl{display:flex;justify-content:center;gap:18px;margin-top:22px}
+.ctl button{width:64px;height:64px;border-radius:50%;border:0;cursor:pointer;display:grid;place-items:center;font-size:26px;font-weight:900;transition:transform .15s}
+.ctl button:hover{transform:scale(1.08)}
+.ctl .no{background:#26242a;color:#cfcbd3}
+.ctl .yes{background:var(--red);color:#fff}
+.ctl .undo{background:#26242a;color:#cfcbd3;width:48px;height:48px;font-size:18px;align-self:center}
+.howto{text-align:center;color:#8f8b94;font-size:13.5px;margin-top:12px}
+.matches{margin-top:14px;display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;min-height:28px}
+.matches b{font-size:13.5px;color:#cfcbd3;margin-right:4px}
+.matches button{font:inherit;font-size:12.5px;font-weight:700;background:#26242a;color:#fff;border:0;border-radius:999px;padding:5px 10px;cursor:pointer;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* it's a match */
+.itsa{position:fixed;inset:0;z-index:60;background:rgba(216,0,46,.96);display:none;align-items:center;justify-content:center;padding:24px;text-align:center}
+.itsa.on{display:flex;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:scale(1.04)}}
+.itsa h2{font-family:Unbounded;font-weight:900;font-size:clamp(44px,8vw,110px);line-height:.9;letter-spacing:-.03em;text-transform:uppercase}
+.itsa p{font-size:clamp(18px,1.8vw,24px);max-width:36ch;margin:22px auto 28px;line-height:1.35}
+.itsa p small{display:block;font-size:15px;opacity:.85;margin-top:8px}
+.itsa .row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.itsa .btn.w{background:#fff;color:var(--red);border-color:#fff}
+@media (max-width:900px){.hero{grid-template-columns:1fr;min-height:0}.deckwrap{max-width:360px}}
+
+/* full site */
+.s-root{--s-bg:var(--paper);--s-bg2:#fff;--s-fg:var(--ink);--s-soft:var(--soft);--s-line:rgba(19,18,21,.12);--s-card:#fff;--s-chip:rgba(19,18,21,.05);
+  --s-display:Unbounded,sans-serif;--s-h2:clamp(40px,6vw,96px);--s-h2ls:-.035em;--s-h2tt:uppercase;--s-r:24px}
+.s-root .s-sec-deadlines{background:var(--ink);--s-fg:#fff;--s-soft:#a9a5ad;--s-line:rgba(255,255,255,.12);--s-card:#1d1b20;--s-chip:#29262d}
+.s-root .s-tabs button{border-radius:999px}
+.s-root .s-tabs button[aria-selected=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.s-root .s-sec-deadlines .s-tabs button[aria-selected=true]{background:var(--red)}
+.s-root .s-date,.s-root .s-stats b,.s-root .s-panel h3{font-weight:700}
+@media (max-width:520px){.s-root .s-head h2{font-size:7.6vw}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.card{transition:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="logo" href="#">IBUISC'26</a>
+  <nav aria-label="Sections"><a href="#about">About</a><a href="#topics">Topics</a><a href="#agenda">Agenda</a><a href="#committees">Committees</a><a class="go" href="#submit">Submit</a></nav>
+</header>
+<main>
+<section class="hero">
+  <div class="copy">
+    <p class="pre">International Balkan University · International Student Congress 2026</p>
+    <h1>Find your <span>topic.</span></h1><p class="sub">Youth at the Crossroads</p>
+    <p class="theme" id="theme"></p>
+    <div class="when"><span><b>2–3 December 2026</b>Wednesday & Thursday</span><span><b>Skopje</b>International Balkan University</span><span><b id="cnt"></b>topics to swipe</span></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn red" href="#submit">Submit your work</a><a class="btn" href="#agenda">See the agenda</a></div>
+  </div>
+  <div class="deckwrap">
+    <div class="filters" id="filters" role="group" aria-label="Filter the deck by faculty"></div>
+    <div class="deck" id="deck" aria-live="polite"></div>
+    <div class="ctl">
+      <button type="button" class="no" id="no" aria-label="Skip this topic">✕</button>
+      <button type="button" class="undo" id="undo" aria-label="Undo the last swipe">↺</button>
+      <button type="button" class="yes" id="yes" aria-label="Match with this topic">♥</button>
+    </div>
+    <p class="howto">Drag the card, use the buttons, or press ← and →</p>
+    <div class="matches" id="matches"></div>
+  </div>
+</section>
+<div class="s-root" id="site"></div>
+</main>
+<div class="itsa" id="itsa" role="dialog" aria-modal="true" aria-labelledby="itsaT">
+  <div><h2 id="itsaT">It's a match</h2><p id="itsaP"></p>
+    <div class="row"><a class="btn w" href="#submit" id="itsaGo">Submit on this topic</a><button type="button" class="btn" id="itsaKeep">Keep swiping</button></div></div>
+</div>
+
+<script src="data.js"></script>
+<script src="site.js"></script>
+<script>
+const D = IBUISC, U = D.util, reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+IBUISC.site(document.getElementById("site"));
+document.getElementById("theme").textContent = D.theme;
+document.getElementById("cnt").textContent = U.topicCount();
+
+/* ---------- the deck: one card per topic ---------- */
+const COLORS = ["#d8002e", "#3b3a9e", "#0f7a55", "#c46a00", "#8a1c7c", "#1c6fb5"];
+const THEMES = [["AI", /\bAI\b|Artificial|Algorithm|Chatbot|Federated|Generative|Intelligent|Smart|Digital|Blockchain|Tele-/], ["Sustainability", /Sustainab|Green|Climate|Environment/], ["Society", /Societ|Social|Democra|Govern|Politic|Rights|Child|Workplace|Mental|Equity|Trade|Consumer|Education|Learning|Ethic|Living|Cities|Human/]];
+const ALL = []; D.faculties.forEach((f, fi) => f.topics.forEach(t => ALL.push({ f, fi, t })));
+let filter = -1, deck = [], history = [], liked = [];
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function deal() { deck = shuffle(ALL.filter(c => (filter < 0 || c.fi === filter) && !liked.includes(c))); history = []; render(); }
+const deckEl = document.getElementById("deck");
+function render() {
+  deckEl.innerHTML = deck.length ? "" : `<div class="empty"><div><b>That's the whole deck</b>${liked.length ? `You matched ${liked.length} ${liked.length === 1 ? "topic" : "topics"}. Pick one below to submit, or shuffle again.` : "Nothing matched yet. Shuffle and try again."}<br><br><button type="button" class="btn" id="again" style="border-color:#fff">Shuffle again</button></div></div>`;
+  const again = document.getElementById("again"); if (again) again.onclick = deal;
+  deck.slice(-3).forEach((c, i, arr) => {
+    const el = document.createElement("div");
+    el.className = "card"; el.style.setProperty("--c", COLORS[c.fi]);
+    const tags = THEMES.filter(([, r]) => r.test(c.t)).map(([n]) => `<span>${n}</span>`).join("");
+    const n = c.f.topics.indexOf(c.t) + 1;
+    el.innerHTML = `<span class="big" aria-hidden="true">${U.pad(n)}</span><div class="fac"><span>${c.f.short}</span><span>${n} of ${c.f.topics.length}</span></div><h3>${U.esc(c.t)}</h3><div class="tags">${tags}</div><span class="stamp yes">MATCH</span><span class="stamp no">SKIP</span>`;
+    if (i === arr.length - 1) { el.setAttribute("aria-label", `${c.f.name}: ${c.t}`); drag(el); }
+    deckEl.appendChild(el);
+  });
+  document.getElementById("matches").innerHTML = liked.length ? `<b>Your matches</b>` + liked.map((c, i) => `<button type="button" data-i="${i}" title="${U.esc(c.t)}">${U.esc(c.t)}</button>`).join("") : "";
+}
+function swipe(dir) {
+  const el = deckEl.querySelector(".card:last-child"); if (!el || !deck.length) return;
+  const c = deck.pop(); history.push(c);
+  el.style.transform = `translate(${dir * 620}px,${-60}px) rotate(${dir * 30}deg)`; el.style.opacity = 0;
+  if (dir > 0) liked.push(c);
+  setTimeout(() => { render(); if (dir > 0) celebrate(c); }, reduce ? 0 : 280);
+}
+function drag(el) {
+  let x0 = 0, y0 = 0, dx = 0, dy = 0, on = false;
+  el.addEventListener("pointerdown", e => { on = true; x0 = e.clientX; y0 = e.clientY; el.classList.add("drag"); el.setPointerCapture(e.pointerId); });
+  el.addEventListener("pointermove", e => {
+    if (!on) return; dx = e.clientX - x0; dy = e.clientY - y0;
+    el.style.transform = `translate(${dx}px,${dy}px) rotate(${dx / 18}deg)`;
+    el.querySelector(".yes").style.opacity = Math.max(0, dx / 110); el.querySelector(".no").style.opacity = Math.max(0, -dx / 110);
+  });
+  const end = () => { if (!on) return; on = false; el.classList.remove("drag"); if (Math.abs(dx) > 110) swipe(Math.sign(dx)); else { el.style.transform = ""; el.querySelectorAll(".stamp").forEach(s => s.style.opacity = 0); } dx = dy = 0; };
+  el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end);
+}
+document.getElementById("yes").onclick = () => swipe(1);
+document.getElementById("no").onclick = () => swipe(-1);
+document.getElementById("undo").onclick = () => { const c = history.pop(); if (!c) return; liked = liked.filter(x => x !== c); deck.push(c); render(); };
+addEventListener("keydown", e => {
+  if (document.getElementById("itsa").classList.contains("on")) { if (e.key === "Escape") closeMatch(); return; }
+  if (e.target.matches("input,select,textarea")) return;
+  const r = deckEl.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+  if (e.key === "ArrowRight") swipe(1); if (e.key === "ArrowLeft") swipe(-1);
+});
+document.getElementById("filters").innerHTML = `<button type="button" aria-pressed="true" data-i="-1">All</button>` + D.faculties.map((f, i) => `<button type="button" aria-pressed="false" data-i="${i}">${f.short}</button>`).join("");
+document.getElementById("filters").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; filter = +b.dataset.i; document.querySelectorAll("#filters button").forEach(x => x.setAttribute("aria-pressed", x === b)); deal(); });
+
+/* ---------- it's a match: carry the topic into the form ---------- */
+let current = null;
+function celebrate(c) {
+  current = c;
+  document.getElementById("itsaP").innerHTML = `“${U.esc(c.t)}”<small>${c.f.name} · Abstracts close ${D.deadlines[0].display}</small>`;
+  document.getElementById("itsa").classList.add("on"); document.getElementById("itsaGo").focus();
+}
+function closeMatch() { document.getElementById("itsa").classList.remove("on"); }
+function prefill(c) { const fa = document.getElementById("sFa"), to = document.getElementById("sTo"); fa.value = c.f.code; fa.dispatchEvent(new Event("change")); to.value = c.t; }
+document.getElementById("itsaGo").onclick = () => { prefill(current); closeMatch(); };
+document.getElementById("itsaKeep").onclick = closeMatch;
+document.getElementById("matches").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; prefill(liked[+b.dataset.i]); document.getElementById("submit").scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); });
+deal();
+</script>
+</body>
+</html>

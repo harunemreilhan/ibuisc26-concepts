@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>IBUISC'26 · Website Concepts</title>
+<link rel="icon" href="favicon/favicon-32x32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --red:#d8002e; --ink:#141316; --paper:#f4f3f0; --soft:#625f66; --line:#dedbd6; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--paper); color:var(--ink); font-family:'Inter Tight',sans-serif; line-height:1.5; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; }
+  :focus-visible { outline:3px solid var(--red); outline-offset:3px; }
+  .w { max-width:1240px; margin:0 auto; padding:0 clamp(16px,4vw,48px); }
+
+  header { background:var(--ink); color:#fff; padding:56px 0 48px; }
+  header .k { color:#ff6b88; font-weight:700; font-size:15px; }
+  header h1 { font-size:clamp(40px,6vw,84px); font-weight:900; letter-spacing:-.04em; line-height:.92; margin:12px 0 18px; }
+  header h1 span { color:var(--red); }
+  header p { color:#c9c6cc; font-size:18px; max-width:62ch; }
+  .facts { display:flex; gap:32px; flex-wrap:wrap; margin-top:28px; padding-top:20px; border-top:1px solid rgba(255,255,255,.14); }
+  .facts b { display:block; font-size:22px; font-weight:800; }
+  .facts span { color:#a9a6ad; font-size:14px; }
+
+  .how { list-style:none; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:28px; }
+  .how li { display:flex; gap:12px; align-items:flex-start; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:14px 16px; font-size:15.5px; color:#e3e1e6; }
+  .how b { flex:none; width:28px; height:28px; border-radius:50%; background:var(--red); color:#fff; display:grid; place-items:center; font-size:14px; }
+  @media (max-width:760px) { .how { grid-template-columns:1fr; } }
+  .toc { position:sticky; top:0; z-index:5; background:var(--paper); border-bottom:1px solid var(--line); }
+  .toc .w { display:flex; gap:6px; flex-wrap:wrap; padding-top:12px; padding-bottom:12px; }
+  .toc a { text-decoration:none; font-weight:700; font-size:14.5px; padding:8px 14px; border-radius:999px; background:#fff; border:1px solid var(--line); }
+  .toc a:hover { border-color:var(--ink); }
+  .toc a b { color:var(--red); margin-right:6px; }
+
+  .c { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); gap:clamp(24px,4vw,56px); align-items:center; padding:64px 0; border-bottom:1px solid var(--line); }
+  .c:nth-child(even) .shot { order:2; }
+  .shot { display:block; border-radius:16px; overflow:hidden; box-shadow:0 30px 60px -36px rgba(20,19,22,.55), 0 0 0 1px rgba(0,0,0,.06); transition:transform .25s; }
+  .shot:hover { transform:translateY(-4px); }
+  .shot img { display:block; width:100%; height:auto; }
+  .n { font-weight:800; font-size:14px; color:var(--red); }
+  .c h2 { font-size:clamp(30px,3.4vw,46px); font-weight:900; letter-spacing:-.03em; line-height:1; margin:8px 0 12px; }
+  .c .idea { font-size:17.5px; color:#38353b; }
+  .c h3 { font-size:13px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--soft); margin:22px 0 8px; }
+  .c ul { list-style:none; }
+  .c li { padding:7px 0 7px 22px; border-top:1px solid var(--line); position:relative; font-size:15.5px; }
+  .c li::before { content:""; position:absolute; left:2px; top:15px; width:8px; height:8px; border-radius:50%; background:var(--red); }
+  .open { display:inline-flex; gap:8px; margin-top:22px; background:var(--red); color:#fff; font-weight:800; font-size:15.5px; padding:13px 22px; border-radius:999px; text-decoration:none; }
+  .open:hover { background:var(--ink); }
+  @media (max-width:880px) { .c { grid-template-columns:1fr; } .c:nth-child(even) .shot { order:0; } }
+
+  .common { padding:64px 0 80px; }
+  .common h2 { font-size:clamp(28px,3vw,40px); font-weight:900; letter-spacing:-.03em; margin-bottom:8px; }
+  .common > .w > p { color:var(--soft); max-width:62ch; margin-bottom:24px; }
+  .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+  .grid div { background:#fff; border:1px solid var(--line); border-radius:14px; padding:20px; }
+  .grid b { display:block; font-size:16.5px; margin-bottom:4px; }
+  .grid p { font-size:15px; color:var(--soft); }
+  @media (max-width:880px) { .grid { grid-template-columns:1fr; } }
+  footer { background:var(--ink); color:#a9a6ad; padding:28px 0; font-size:14px; }
+</style>
+</head>
+<body>
+<header><div class="w">
+  <p class="k">International Balkan University · Website proposal</p>
+  <h1>IBUISC'26 <span>website concepts</span></h1>
+  <p>Five directions for the 2026 International Student Congress website, “Youth at the Crossroads: Artificial Intelligence, Sustainability, and the Future of Society”. Each one is a working, complete site with all of the congress content, on computers and phones.</p>
+  <div class="facts"><div><b>5</b><span>concepts</span></div><div><b>2–3 Dec 2026</b><span>congress dates</span></div><div><b>39</b><span>topics, 6 faculties</span></div><div><b>Desktop + mobile</b><span>every concept</span></div></div>
+  <ol class="how" aria-label="How to choose">
+    <li><b>1</b><span>Open each concept below. They work on a computer or a phone.</span></li>
+    <li><b>2</b><span>Try the interactive part and scroll through the whole page.</span></li>
+    <li><b>3</b><span>Reply to the message you received with the numbers of the concepts you like, best first.</span></li>
+  </ol>
+</div></header>
+
+<nav class="toc" aria-label="Concepts"><div class="w">
+  <a href="#c1"><b>1</b>Match</a><a href="#c2"><b>2</b>Drop</a><a href="#c3"><b>3</b>Group Chat</a><a href="#c4"><b>4</b>The Road</a><a href="#c5"><b>5</b>Cinematic</a><a href="#common">What every concept includes</a>
+</div></nav>
+
+<main class="w" id="list">
+  <section class="c" id="c1">
+    <a class="shot" href="v2/match.html" target="_blank"><img src="shots/match.png" alt="Match concept: a swipeable deck of congress topics" loading="lazy"></a>
+    <div>
+      <p class="n">Concept 1 · reply with “1”</p>
+      <h2>Match</h2>
+      <p class="idea">Students find their research topic the way they already find everything else: by swiping. Every one of the 39 congress topics is a card.</p>
+      <h3>Try it</h3>
+      <ul><li>Drag a card to the right (or press ♥) to see the “It's a match” screen.</li><li>Press “Submit on this topic”: the form further down fills itself in.</li><li>Filter the deck by faculty at the top of the deck.</li></ul>
+      <a class="open" href="v2/match.html" target="_blank">Open the concept ↗</a>
+    </div>
+  </section>
+  <section class="c" id="c2">
+    <a class="shot" href="v2/drop.html" target="_blank"><img src="shots/drop.png" alt="Drop concept: theme and faculty blocks fallen into a pile" loading="lazy"></a>
+    <div>
+      <p class="n">Concept 2 · reply with “2”</p>
+      <h2>Drop</h2>
+      <p class="idea">The themes, faculties, dates and sessions fall into the opening screen as solid blocks with real physics. A playful, memorable first impression that still states every key fact.</p>
+      <h3>Try it</h3>
+      <ul><li>Watch the blocks fall when the page opens.</li><li>Grab a block and throw it; on a phone, drag it with your finger.</li><li>Press “Drop again” to replay.</li></ul>
+      <a class="open" href="v2/drop.html" target="_blank">Open the concept ↗</a>
+    </div>
+  </section>
+  <section class="c" id="c3">
+    <a class="shot" href="v2/chat.html" target="_blank"><img src="shots/chat.png" alt="Group Chat concept: the organising team writing in a phone chat" loading="lazy"></a>
+    <div>
+      <p class="n">Concept 3 · reply with “3”</p>
+      <h2>Group Chat</h2>
+      <p class="idea">The organising team writes to the visitor in a group chat on a phone. It speaks the language of students, and every answer comes from the real congress information.</p>
+      <h3>Try it</h3>
+      <ul><li>Wait a few seconds for the first messages.</li><li>Tap “When's the deadline?” under the chat: a live countdown answers.</li><li>Tap a link inside the chat to jump to that part of the site.</li></ul>
+      <a class="open" href="v2/chat.html" target="_blank">Open the concept ↗</a>
+    </div>
+  </section>
+  <section class="c" id="c4">
+    <a class="shot" href="v2/journey.html" target="_blank"><img src="shots/journey.png" alt="The Road concept: three roads meeting at a junction in Skopje" loading="lazy"></a>
+    <div>
+      <p class="n">Concept 4 · reply with “4”</p>
+      <h2>Youth at the Crossroads: The Road</h2>
+      <p class="idea">The theme drawn literally: three roads (AI, sustainability, society) meet at a junction in Skopje. Scrolling then travels sideways along the road through the four deadlines.</p>
+      <h3>Try it</h3>
+      <ul><li>Watch the three roads draw in and meet.</li><li>Scroll down: the page moves sideways through the deadlines, each with a live countdown.</li><li>Continue into the full site below.</li></ul>
+      <a class="open" href="v2/journey.html" target="_blank">Open the concept ↗</a>
+    </div>
+  </section>
+  <section class="c" id="c5">
+    <a class="shot" href="v2/cinematic.html" target="_blank"><img src="shots/cinematic.png" alt="Cinematic concept: large headline with a numbered chapter" loading="lazy"></a>
+    <div>
+      <p class="n">Concept 5 · reply with “5”</p>
+      <h2>Cinematic Chapters</h2>
+      <p class="idea">The site is told like a film in numbered chapters, with large type, chapter numbers and a reading-progress bar. The most classic and confident of the five.</p>
+      <h3>Try it</h3>
+      <ul><li>Scroll slowly: chapter titles rise into view and the red bar fills.</li><li>Point at a faculty in chapter 02 to preview its topics.</li><li>Click it to open that faculty further down.</li></ul>
+      <a class="open" href="v2/cinematic.html" target="_blank">Open the concept ↗</a>
+    </div>
+  </section>
+</main>
+
+<section class="common" id="common"><div class="w">
+  <h2>What every concept includes</h2>
+  <p>All five share the same content and structure, so whichever is chosen is ready to be completed with the 2026 details.</p>
+  <div class="grid">
+    <div><b>All the congress content</b><p>About, 39 topics, two-day agenda, committees, guidelines, publications, announcements and sponsor.</p></div>
+    <div><b>Live countdowns</b><p>Abstract, acceptance, full paper and congress dates count down in real time.</p></div>
+    <div><b>Easy to read long lists</b><p>One faculty, one day and one committee at a time; participants open on demand.</p></div>
+    <div><b>Submission form</b><p>Abstract or full paper, faculty and topic choice, Word upload. Ready to connect to email or a server.</p></div>
+    <div><b>Phones and tablets</b><p>Every concept is tested on desktop and mobile screens.</p></div>
+    <div><b>One content file</b><p>Dates, topics, agenda and committees live in one file, so updates are made once for the whole site.</p></div>
+  </div>
+</div></section>
+<footer><div class="w">IBUISC'26 website proposal · Prepared by the Technical Support Team, International Balkan University · These are prototypes: the forms do not send anything, and some dates and lists are still from 2025.</div></footer>
+</body>
+</html>

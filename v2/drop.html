@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IBUISC'26 · Drop</title>
+<link rel="icon" href="../favicon/favicon-32x32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<style>
+:root{--red:#d8002e;--ink:#151416;--paper:#f1efea;--pink:#ffb3c2;--soft:#5f5b5e}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Bricolage Grotesque",sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.top{position:fixed;inset:0 0 auto;z-index:40;display:flex;align-items:center;gap:16px;padding:14px clamp(16px,4vw,48px);pointer-events:none}
+.top>*{pointer-events:auto}
+.logo{font-weight:800;font-size:22px;text-decoration:none;font-stretch:80%}
+.top nav{margin-left:auto;display:flex;gap:2px;background:#fff;padding:4px;border-radius:999px;box-shadow:0 6px 20px -10px rgba(0,0,0,.3)}
+.top nav a{text-decoration:none;font-weight:700;font-size:15px;padding:7px 13px;border-radius:999px}
+.top nav a:hover{background:var(--paper)}
+.top .go{background:var(--red);color:#fff}
+.top .go:hover{background:var(--ink)}
+@media (max-width:880px){.top nav a:not(.go){display:none}}
+
+/* the drop zone: words fall in and can be grabbed and thrown */
+.zone{position:relative;height:100vh;min-height:620px;overflow:hidden;touch-action:pan-y}
+.copy{position:absolute;left:clamp(16px,4vw,48px);top:96px;max-width:620px;z-index:1;pointer-events:none}
+.copy .pre{font-weight:700;font-size:15px;color:var(--soft)}
+.copy h1{font-size:clamp(46px,6.6vw,108px);font-weight:800;font-stretch:78%;line-height:.88;letter-spacing:-.02em;margin:10px 0 14px}
+.copy h1 span{color:var(--red)}
+.copy .theme{font-size:clamp(17px,1.4vw,20px);font-weight:500;max-width:34ch;line-height:1.35}
+.copy .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;pointer-events:auto}
+.btn{display:inline-flex;font:inherit;font-weight:800;font-size:16px;padding:12px 22px;border-radius:999px;text-decoration:none;border:2px solid var(--ink);background:none;cursor:pointer;color:var(--ink)}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff}
+.btn:hover{background:var(--ink);border-color:var(--ink);color:#fff}
+.meta{position:absolute;right:clamp(16px,4vw,48px);top:96px;text-align:right;font-weight:800;font-size:clamp(18px,1.7vw,26px);line-height:1.15;font-stretch:80%;z-index:1;pointer-events:none}
+.meta small{display:block;font-weight:600;font-size:14px;color:var(--soft);font-stretch:100%}
+.hint{display:flex;gap:10px;align-items:center;margin-top:16px;pointer-events:auto}
+.hint span{font-weight:600;font-size:14px;color:var(--soft);max-width:30ch}
+.hint button{font:inherit;font-weight:800;font-size:14px;padding:8px 14px;border-radius:999px;border:0;background:var(--ink);color:#fff;cursor:pointer}
+.blk{position:absolute;left:0;top:0;display:flex;align-items:center;gap:.4em;white-space:nowrap;font-weight:800;font-stretch:80%;line-height:1;border-radius:999px;cursor:grab;user-select:none;will-change:transform;z-index:2;
+  font-size:var(--fs);padding:.34em .62em .38em}
+.blk.grab{cursor:grabbing}
+.blk.k0{background:var(--red);color:#fff}
+.blk.k1{background:var(--ink);color:#fff}
+.blk.k2{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 3px var(--ink)}
+.blk.k3{background:var(--pink);color:var(--ink)}
+.blk.sq{border-radius:.28em}
+.blk small{font-size:.42em;font-weight:700;opacity:.8;font-stretch:100%}
+.tray{display:none}
+@media (max-width:760px){.meta{display:none}.copy{top:80px}.hint span{max-width:22ch}}
+
+/* full site */
+.s-root{--s-bg:var(--paper);--s-bg2:#fff;--s-fg:var(--ink);--s-soft:var(--soft);--s-line:rgba(21,20,22,.12);--s-card:#fff;--s-chip:rgba(21,20,22,.05);
+  --s-display:"Bricolage Grotesque",sans-serif;--s-h2:clamp(56px,8.4vw,140px);--s-h2w:800;--s-h2ls:-.03em;--s-r:22px}
+.s-root .s-head h2{font-stretch:76%;line-height:.86}
+.s-root .s-tabs button{border-radius:999px;font-weight:700}
+.s-root .s-tabs button[aria-selected=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.s-root .s-sec-deadlines{background:var(--red);--s-fg:#fff;--s-soft:rgba(255,255,255,.8);--s-line:rgba(255,255,255,.28);--s-card:rgba(0,0,0,.12);--s-chip:rgba(0,0,0,.16);--s-accent:#fff;--s-accent-fg:var(--red)}
+.s-root .s-sec-deadlines .s-dlc[data-k=abstract] .s-cd span{color:#fff}
+.s-root .s-dlc,.s-root .s-card{border-radius:26px}
+.s-root .s-stats b{font-stretch:76%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="logo" href="#">IBUISC'26</a>
+  <nav aria-label="Sections"><a href="#about">About</a><a href="#topics">Topics</a><a href="#agenda">Agenda</a><a href="#committees">Committees</a><a class="go" href="#submit">Submit</a></nav>
+</header>
+<main>
+<section class="zone" id="zone" aria-label="The congress themes and faculties fall into place. Grab and throw them.">
+  <div class="copy">
+    <p class="pre">International Student Congress 2026 · International Balkan University</p>
+    <h1>Youth at the <span>Crossroads</span></h1>
+    <p class="theme">Artificial Intelligence, Sustainability, and the Future of Society.</p>
+    <div class="row"><a class="btn red" href="#submit">Submit your work</a><a class="btn" href="#agenda">See the agenda</a></div>
+    <div class="hint"><span>Grab a block and throw it, or click empty space to shake the pile.</span><button type="button" id="again">Drop again</button></div>
+  </div>
+  <p class="meta">2–3 December 2026<small>Wednesday & Thursday</small><br>Skopje<small>North Macedonia</small></p>
+</section>
+<div class="s-root" id="site"></div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js" integrity="sha384-OqQP3UcU7efkEYDRjGmQou2uEvzGFGRtwdYXTjnupeB9cWogSgQ4BOhyklFBYbBR" crossorigin="anonymous"></script>
+<script src="data.js"></script>
+<script src="site.js"></script>
+<script>
+const D = IBUISC, U = D.util, reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+IBUISC.site(document.getElementById("site"));
+
+/* ---------- the drop zone ---------- */
+const { Engine, Bodies, Body, Composite, Mouse, MouseConstraint, Events } = Matter;
+const zone = document.getElementById("zone");
+const engine = Engine.create({ gravity: { y: 1.1 } });
+// what falls: the three themes big, then the faculties, dates and a few session names
+const BLOCKS = [
+  ["Artificial Intelligence", 0, 1.5], ["Sustainability", 1, 1.5], ["Future of Society", 2, 1.5],
+  ["Youth", 3, 1.9, "sq"], ["2–3 Dec", 1, 1.25, "sq"], ["Skopje", 0, 1.25, "sq"],
+  ...D.faculties.map((f, i) => [`${f.short}<small>${f.topics.length} topics</small>`, [2, 3, 1, 2, 3, 0][i], .95]),
+  ["Keynotes", 2, .8], ["Debate", 1, .8], ["Hackathon", 3, .8], ["World Café", 0, .8], ["Gala Dinner", 2, .8],
+  [`${U.topicCount()} topics`, 0, 1.05, "sq"], [`${D.stats.countries} countries`, 3, .9]
+];
+let items = [], walls = [], W, H, base;
+function build() {
+  Composite.clear(engine.world, false);
+  items.forEach(it => it.el.remove()); items = [];
+  W = zone.clientWidth; H = zone.clientHeight; base = Math.max(14, Math.min(34, W / 42));
+  const t = 200;
+  walls = [Bodies.rectangle(W / 2, H + t / 2, W * 3, t, { isStatic: true }), Bodies.rectangle(-t / 2, H / 2, t, H * 6, { isStatic: true }), Bodies.rectangle(W + t / 2, H / 2, t, H * 6, { isStatic: true })];
+  Composite.add(engine.world, walls);
+  const list = W < 760 ? BLOCKS.filter((b, i) => i < 12 || i >= BLOCKS.length - 2) : BLOCKS;
+  list.forEach(([html, k, scale, shape], i) => {
+    const el = document.createElement("div");
+    el.className = `blk k${k}${shape ? " " + shape : ""}`; el.innerHTML = html; el.style.setProperty("--fs", base * scale + "px");
+    el.setAttribute("aria-hidden", "true");
+    zone.appendChild(el);
+    const w = el.offsetWidth, h = el.offsetHeight;
+    const x = Math.min(W - w / 2 - 10, Math.max(w / 2 + 10, W * (.25 + .7 * Math.random())));
+    const y = reduce ? H - h : -h - i * (H * .09) - Math.random() * 60;
+    const body = Bodies.rectangle(x, y, w, h, { chamfer: { radius: shape ? h * .28 : h / 2 - 1 }, restitution: .35, friction: .3, frictionAir: .012, angle: (Math.random() - .5) * .6 });
+    Composite.add(engine.world, body);
+    items.push({ el, body, w, h });
+  });
+}
+// pointer: grab and throw
+const mouse = Mouse.create(zone);
+mouse.pixelRatio = 1;
+const mc = MouseConstraint.create(engine, { mouse, constraint: { stiffness: .2, damping: .1, render: { visible: false } } });
+Composite.add(engine.world, mc);
+// let the page scroll with the wheel and on touch unless a block is held
+mouse.element.removeEventListener("wheel", mouse.mousewheel);
+mouse.element.removeEventListener("DOMMouseScroll", mouse.mousewheel);
+mouse.element.removeEventListener("touchmove", mouse.mousemove);
+zone.addEventListener("touchmove", e => { if (mc.body) { mouse.mousemove(e); e.preventDefault(); } }, { passive: false });
+Events.on(mc, "startdrag", e => { const it = items.find(i => i.body === e.body); it && it.el.classList.add("grab"); });
+Events.on(mc, "enddrag", () => items.forEach(i => i.el.classList.remove("grab")));
+// a click (no drag) on empty space throws everything up a little
+let downAt = null;
+zone.addEventListener("pointerdown", e => { downAt = [e.clientX, e.clientY]; });
+zone.addEventListener("pointerup", e => {
+  if (!downAt || e.target.closest("a,button") || mc.body) return;
+  if (Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 5) return;
+  const r = zone.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+  items.forEach(({ body }) => { const dx = body.position.x - px, dy = body.position.y - py, d = Math.hypot(dx, dy); if (d < 360) Body.setVelocity(body, { x: dx / d * 14 * (1 - d / 360), y: -18 * (1 - d / 360) }); });
+});
+document.getElementById("again").onclick = build;
+
+let last = performance.now(), visible = true;
+function loop(now) {
+  if (visible) {
+    Engine.update(engine, Math.min(1000 / 30, now - last));
+    items.forEach(({ el, body, w, h }) => { el.style.transform = `translate(${body.position.x - w / 2}px,${body.position.y - h / 2}px) rotate(${body.angle}rad)`; });
+  }
+  last = now;
+  requestAnimationFrame(loop);
+}
+document.fonts.ready.then(() => { build(); requestAnimationFrame(loop); });
+new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(zone);
+let rz, lw = innerWidth; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (Math.abs(innerWidth - lw) > 60) { lw = innerWidth; build(); } }, 200); });
+</script>
+</body>
+</html>
