@@ -132,11 +132,23 @@ const mouse = Mouse.create(zone);
 mouse.pixelRatio = 1;
 const mc = MouseConstraint.create(engine, { mouse, constraint: { stiffness: .2, damping: .1, render: { visible: false } } });
 Composite.add(engine.world, mc);
-// let the page scroll with the wheel and on touch unless a block is held
-mouse.element.removeEventListener("wheel", mouse.mousewheel);
-mouse.element.removeEventListener("DOMMouseScroll", mouse.mousewheel);
+// the engine must not swallow the page's scrolling: drop its wheel and touch listeners and
+// handle touch ourselves, grabbing only when the finger lands on a block
+["wheel", "DOMMouseScroll"].forEach(t => mouse.element.removeEventListener(t, mouse.mousewheel));
+mouse.element.removeEventListener("touchstart", mouse.mousedown);
 mouse.element.removeEventListener("touchmove", mouse.mousemove);
-zone.addEventListener("touchmove", e => { if (mc.body) { mouse.mousemove(e); e.preventDefault(); } }, { passive: false });
+mouse.element.removeEventListener("touchend", mouse.mouseup);
+let touching = false;
+zone.addEventListener("touchstart", e => {
+  touching = false;
+  if (e.target.closest("a,button")) return;
+  const t = e.touches[0], r = zone.getBoundingClientRect();
+  if (!Matter.Query.point(items.map(i => i.body), { x: (t.clientX - r.left), y: (t.clientY - r.top) }).length) return; // empty space: let the page scroll
+  touching = true; mouse.mousedown(e);
+}, { passive: false });
+zone.addEventListener("touchmove", e => { if (touching) { mouse.mousemove(e); e.preventDefault(); } }, { passive: false });
+const endTouch = e => { if (touching) { mouse.mouseup(e); touching = false; } };
+zone.addEventListener("touchend", endTouch); zone.addEventListener("touchcancel", endTouch);
 Events.on(mc, "startdrag", e => { const it = items.find(i => i.body === e.body); it && it.el.classList.add("grab"); });
 Events.on(mc, "enddrag", () => items.forEach(i => i.el.classList.remove("grab")));
 // a click (no drag) on empty space throws everything up a little
@@ -149,6 +161,7 @@ zone.addEventListener("pointerup", e => {
   items.forEach(({ body }) => { const dx = body.position.x - px, dy = body.position.y - py, d = Math.hypot(dx, dy); if (d < 360) Body.setVelocity(body, { x: dx / d * 14 * (1 - d / 360), y: -18 * (1 - d / 360) }); });
 });
 document.getElementById("again").onclick = build;
+if (matchMedia("(pointer:coarse)").matches) document.querySelector(".hint span").textContent = "Drag a block to throw it. Swipe on empty space to scroll.";
 
 let last = performance.now(), visible = true;
 function loop(now) {
