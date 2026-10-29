@@ -45,9 +45,10 @@
   nav .links .m-only{display:none}
   nav>.btn{margin-left:10px}
   .menu{display:none;font:inherit;font-weight:700;font-size:15px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);padding:10px 16px;border-radius:999px;cursor:pointer}
-  nav .bar{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--red)}
+  nav .bar{position:absolute;left:0;bottom:-1px;height:2px;width:100%;background:var(--red);transform:scaleX(0);transform-origin:left;will-change:transform}
   @media (max-width:980px){
     nav{padding:12px 20px}
+    nav.solid{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--bg)}
     nav>.btn{display:none}
     .menu{display:block}
     nav .links{display:none;position:absolute;top:calc(100% + 6px);left:12px;right:12px;flex-direction:column;gap:2px;padding:8px;border-radius:20px;background:var(--bg2);border:1px solid var(--line);box-shadow:0 20px 40px -20px rgba(20,10,15,.4)}
@@ -92,10 +93,11 @@
   /* key dates: the road continues downwards, one stop per milestone */
   .route{list-style:none;position:relative;padding-left:96px}
   .route .road{position:absolute;left:22px;top:6px;bottom:6px;width:44px;border-radius:22px;background:var(--road);overflow:hidden}
-  .route .road::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px;background:repeating-linear-gradient(var(--lane) 0 18px,transparent 18px 34px);background-position:0 var(--flow,0);z-index:1}
-  .route .road i{position:absolute;left:0;right:0;top:0;height:0;background:var(--red)}
+  /* everything that moves with the scroll uses transforms only, so phones can keep it on the GPU */
+  .route .lane{position:absolute;left:50%;top:-34px;bottom:0;width:3px;margin-left:-1.5px;background:repeating-linear-gradient(var(--lane) 0 18px,transparent 18px 34px);z-index:1;will-change:transform}
+  .route .road i{position:absolute;left:0;right:0;top:0;height:100%;background:var(--red);transform:scaleY(0);transform-origin:top;will-change:transform}
   /* the marker drives down the road with the scroll; stops light up once it has passed them */
-  .puck{position:absolute;left:44px;top:6px;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:var(--red);border:5px solid #fff;box-shadow:0 6px 18px -4px rgba(216,0,46,.7);z-index:2;pointer-events:none}
+  .puck{position:absolute;left:44px;top:6px;will-change:transform;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:var(--red);border:5px solid #fff;box-shadow:0 6px 18px -4px rgba(216,0,46,.7);z-index:2;pointer-events:none}
   .puck::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:3px solid var(--red);animation:ring 1.8s ease-out infinite}
   @keyframes ring{to{transform:scale(2.4);opacity:0}}
   .stop .when,.stop>div:nth-child(2),.stop .cd{transition:opacity .4s}
@@ -188,7 +190,7 @@ const stops = [
 ];
 const dates = n => `<section class="s-sec s-sec-deadlines" id="deadlines"><div class="s-wrap">
   <div class="s-head"><span class="s-n" aria-hidden="true">${n}</span><h2>Key dates</h2><p>From your first idea to the proceedings, counting down live.</p></div>
-  <ol class="route" id="route"><span class="road" aria-hidden="true"><i id="fill"></i></span><span class="puck" id="puck" aria-hidden="true"></span>${stops.map(s => {
+  <ol class="route" id="route"><span class="road" aria-hidden="true"><i id="fill"></i><b class="lane" id="lane"></b></span><span class="puck" id="puck" aria-hidden="true"></span>${stops.map(s => {
     const d = s.k && dl(s.k);
     return `<li class="stop"${s.k ? ` data-k="${s.k}"` : ""}><div class="when">${d ? `<small>${d.label}</small>${d.display}` : s.when}</div>
       <div><h3>${s.title}</h3><p>${s.text}</p>${s.k === "abstract" ? `<span class="status" id="abState">Open now</span>` : ""}${s.extra || ""}</div>${d ? `<div class="cd" data-k="${s.k}"></div>` : ""}</li>`;
@@ -207,6 +209,7 @@ document.getElementById("facs").addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return;
   const open = b.getAttribute("aria-expanded") !== "true";
   document.querySelectorAll("#facs button").forEach(x => { x.setAttribute("aria-expanded", x === b && open); document.getElementById(x.getAttribute("aria-controls")).hidden = !(x === b && open); });
+  measure(); onScroll();
 });
 
 // live countdowns
@@ -225,19 +228,33 @@ fitRoads(); addEventListener("resize", fitRoads);
 
 // reading progress under the navigation, and the red line along the key-dates road
 const nav = document.getElementById("nav"), bar = document.getElementById("bar"), route = document.getElementById("route"), fill = document.getElementById("fill"), puck = document.getElementById("puck");
-const stopEls = [...route.querySelectorAll(".stop")];
+const lane = document.getElementById("lane"), stopEls = [...route.querySelectorAll(".stop")];
 route.classList.add("live");
-function onScroll() {
-  nav.classList.toggle("solid", scrollY > 40 || nav.classList.contains("open"));
-  bar.style.width = (scrollY / (document.documentElement.scrollHeight - innerHeight) * 100) + "%";
-  const r = route.getBoundingClientRect(), len = r.height - 12;
-  const y = Math.min(len, Math.max(0, innerHeight * .55 - r.top - 6)); // marker position along the road, in px
-  fill.style.height = y + "px";
-  puck.style.top = (6 + y) + "px";
-  route.style.setProperty("--flow", (scrollY * .8) + "px");
-  stopEls.forEach(el => el.classList.toggle("past", el.offsetTop + 50 <= 6 + y + 1));
+// measure once (and on resize), then each frame only writes transforms: no layout work while scrolling
+let routeTop = 0, len = 0, stopYs = [], docMax = 1, solid = null, ticking = false;
+function measure() {
+  routeTop = route.getBoundingClientRect().top + scrollY;
+  len = route.offsetHeight - 12;
+  stopYs = stopEls.map(el => el.offsetTop + 50);
+  docMax = Math.max(1, document.documentElement.scrollHeight - innerHeight);
 }
-addEventListener("scroll", onScroll, { passive: true }); onScroll();
+function frame() {
+  ticking = false;
+  const sy = scrollY, isSolid = sy > 40 || nav.classList.contains("open");
+  if (isSolid !== solid) { solid = isSolid; nav.classList.toggle("solid", isSolid); }
+  bar.style.transform = `scaleX(${Math.min(1, sy / docMax)})`;
+  const y = Math.min(len, Math.max(0, sy + innerHeight * .55 - routeTop - 6)); // marker position along the road, in px
+  fill.style.transform = `scaleY(${len ? y / (len + 12) : 0})`;
+  puck.style.transform = `translateY(${y}px)`;
+  lane.style.transform = `translateY(${(sy * .8) % 34}px)`;
+  stopEls.forEach((el, i) => { const p = stopYs[i] <= 6 + y + 1; if (el._p !== p) { el._p = p; el.classList.toggle("past", p); } });
+}
+const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
+addEventListener("scroll", onScroll, { passive: true });
+addEventListener("resize", () => { measure(); onScroll(); });
+addEventListener("load", () => { measure(); onScroll(); });
+document.fonts && document.fonts.ready.then(() => { measure(); onScroll(); });
+measure(); frame();
 
 // chapter titles rise into view once
 const rise = new IntersectionObserver((es, o) => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); o.unobserve(e.target); } }), { threshold: .4 });
