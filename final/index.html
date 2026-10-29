@@ -77,12 +77,19 @@
   /* key dates: the road continues downwards, one stop per milestone */
   .route{list-style:none;position:relative;padding-left:96px}
   .route .road{position:absolute;left:22px;top:6px;bottom:6px;width:44px;border-radius:22px;background:var(--road);overflow:hidden}
-  .route .road::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px;background:repeating-linear-gradient(var(--lane) 0 18px,transparent 18px 34px)}
-  .route .road i{position:absolute;left:0;right:0;top:0;height:0;background:var(--red);opacity:.9}
+  .route .road::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px;background:repeating-linear-gradient(var(--lane) 0 18px,transparent 18px 34px);background-position:0 var(--flow,0);z-index:1}
+  .route .road i{position:absolute;left:0;right:0;top:0;height:0;background:var(--red)}
+  /* the marker drives down the road with the scroll; stops light up once it has passed them */
+  .puck{position:absolute;left:44px;top:6px;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:var(--red);border:5px solid #fff;box-shadow:0 6px 18px -4px rgba(216,0,46,.7);z-index:2;pointer-events:none}
+  .puck::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:3px solid var(--red);animation:ring 1.8s ease-out infinite}
+  @keyframes ring{to{transform:scale(2.4);opacity:0}}
+  .stop .when,.stop>div:nth-child(2),.stop .cd{transition:opacity .4s}
+  .route.live .stop:not(.past) .when,.route.live .stop:not(.past)>div:nth-child(2),.route.live .stop:not(.past) .cd{opacity:.38}
   .stop{position:relative;display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr) auto;gap:12px 40px;align-items:start;padding:34px 0;border-top:1px solid var(--line)}
   .stop:first-of-type{border-top:0}
-  .stop::before{content:"";position:absolute;left:-84px;top:40px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:4px solid var(--red);z-index:1}
-  .stop[data-k]::before{background:var(--red)}
+  .stop::before{content:"";position:absolute;left:-63px;top:40px;width:22px;height:22px;border-radius:50%;background:var(--bg);border:4px solid var(--red);z-index:1;transition:transform .3s,background .3s}
+  .stop.past::before{background:#fff;transform:scale(1.15)}
+  .stop .btn{color:#fff}
   .when{font-size:clamp(26px,2.6vw,38px);font-weight:800;letter-spacing:-.03em;line-height:1.05}
   .when small{display:block;font-size:15px;font-weight:600;letter-spacing:0;color:var(--red-text);margin-bottom:6px}
   .stop h3{font-size:clamp(22px,2vw,28px);font-weight:800;letter-spacing:-.02em;line-height:1.15}
@@ -95,7 +102,7 @@
   .cd small{display:block;font-size:12px;font-weight:600;color:var(--soft);margin-top:6px}
   .stop[data-k=abstract] .cd span{color:var(--red)}
   @media (max-width:1060px){.stop{grid-template-columns:minmax(0,1fr)}.cd{margin-top:6px}}
-  @media (max-width:600px){.route{padding-left:52px}.route .road{left:6px;width:26px}.stop::before{left:-52px;top:38px;width:18px;height:18px}.cd span{min-width:0;flex:1;font-size:22px;padding:10px 2px}}
+  @media (max-width:600px){.route{padding-left:52px}.route .road{left:6px;width:26px}.puck{left:19px;width:24px;height:24px;margin:-12px 0 0 -12px;border-width:4px}.stop::before{left:-42px;top:38px;width:18px;height:18px}.cd span{min-width:0;flex:1;font-size:22px;padding:10px 2px}}
 
   /* topics: big faculty names in white on red (from Cinematic Chapters); one opens at a time */
   .fac{position:relative;z-index:1}
@@ -119,7 +126,7 @@
   .pal button{font:inherit;border:2px solid transparent;border-radius:999px;padding:6px 12px 6px 8px;background:#f1f0ed;cursor:pointer;display:flex;gap:6px;align-items:center}
   .pal button i{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.2)}
   .pal button[aria-pressed=true]{border-color:var(--red)}
-  @media (prefers-reduced-motion:reduce){.road path,.sign,.junction{animation:none;opacity:1;stroke-dashoffset:0}.road path.lane{opacity:1}.junction .pulse{display:none}.ticker span,.s-root .s-head h2.in{animation:none}}
+  @media (prefers-reduced-motion:reduce){.road path,.sign,.junction{animation:none;opacity:1;stroke-dashoffset:0}.road path.lane{opacity:1}.junction .pulse{display:none}.ticker span,.s-root .s-head h2.in,.puck::after{animation:none}}
 </style>
 </head>
 <body>
@@ -159,7 +166,7 @@ const stops = [
 ];
 const dates = n => `<section class="s-sec s-sec-deadlines" id="deadlines"><div class="s-wrap">
   <div class="s-head"><span class="s-n" aria-hidden="true">${n}</span><h2>Key dates</h2><p>From your first idea to the proceedings, counting down live.</p></div>
-  <ol class="route" id="route"><span class="road" aria-hidden="true"><i id="fill"></i></span>${stops.map(s => {
+  <ol class="route" id="route"><span class="road" aria-hidden="true"><i id="fill"></i></span><span class="puck" id="puck" aria-hidden="true"></span>${stops.map(s => {
     const d = s.k && dl(s.k);
     return `<li class="stop"${s.k ? ` data-k="${s.k}"` : ""}><div class="when">${d ? `<small>${d.label}</small>${d.display}` : s.when}</div>
       <div><h3>${s.title}</h3><p>${s.text}</p>${s.k === "abstract" ? `<span class="status" id="abState">Open now</span>` : ""}${s.extra || ""}</div>${d ? `<div class="cd" data-k="${s.k}"></div>` : ""}</li>`;
@@ -195,11 +202,17 @@ const fitRoads = () => document.getElementById("roads").setAttribute("viewBox", 
 fitRoads(); addEventListener("resize", fitRoads);
 
 // reading progress under the navigation, and the red line along the key-dates road
-const bar = document.getElementById("bar"), route = document.getElementById("route"), fill = document.getElementById("fill");
+const bar = document.getElementById("bar"), route = document.getElementById("route"), fill = document.getElementById("fill"), puck = document.getElementById("puck");
+const stopEls = [...route.querySelectorAll(".stop")];
+route.classList.add("live");
 function onScroll() {
   bar.style.width = (scrollY / (document.documentElement.scrollHeight - innerHeight) * 100) + "%";
-  const r = route.getBoundingClientRect();
-  fill.style.height = Math.min(100, Math.max(0, (innerHeight * .6 - r.top) / r.height * 100)) + "%";
+  const r = route.getBoundingClientRect(), len = r.height - 12;
+  const y = Math.min(len, Math.max(0, innerHeight * .55 - r.top - 6)); // marker position along the road, in px
+  fill.style.height = y + "px";
+  puck.style.top = (6 + y) + "px";
+  route.style.setProperty("--flow", (scrollY * .8) + "px");
+  stopEls.forEach(el => el.classList.toggle("past", el.offsetTop + 50 <= 6 + y + 1));
 }
 addEventListener("scroll", onScroll, { passive: true }); onScroll();
 
