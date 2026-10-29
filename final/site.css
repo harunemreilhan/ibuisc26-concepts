@@ -4,7 +4,7 @@
   --s-bg:#0e0f12; --s-bg2:#15161b; --s-fg:#f3f1ec; --s-soft:rgba(243,241,236,.62); --s-line:rgba(243,241,236,.14);
   --s-accent:#d8002e; --s-accent-fg:#fff; --s-card:rgba(255,255,255,.04); --s-chip:rgba(255,255,255,.07);
   --s-display:inherit; --s-h2:clamp(40px,5.6vw,84px); --s-h2w:900; --s-h2ls:-.04em; --s-h2tt:none; --s-r:14px; --s-pad:clamp(16px,4vw,56px);
-  background:var(--s-bg); color:var(--s-fg); font-size:17px; line-height:1.55;
+  background:var(--s-bg); color:var(--s-fg); font-size:17.5px; font-weight:500; line-height:1.55;
 }
 .s-root *{box-sizing:border-box}
 .s-root a{color:inherit}
@@ -16,7 +16,7 @@
 /* section heading */
 .s-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 40px;margin-bottom:44px;position:relative}
 .s-head h2{font-family:var(--s-display);font-size:var(--s-h2);font-weight:var(--s-h2w);letter-spacing:var(--s-h2ls);text-transform:var(--s-h2tt);line-height:.92;max-width:100%;position:relative;z-index:1}
-.s-head p{color:var(--s-soft);max-width:46ch;margin-left:auto;position:relative;z-index:1}
+.s-head p{color:var(--s-soft);max-width:46ch;margin-left:auto;position:relative;z-index:1;font-size:19px}
 .s-n{display:none}
 @media (max-width:820px){.s-head p{margin-left:0}}
 
@@ -196,7 +196,7 @@ summary.s-row:hover{background:var(--s-chip)}
 .s-mail{margin-top:22px;color:var(--s-soft);font-size:15.5px}
 .s-mail a{color:var(--s-fg);font-weight:700}
 .s-root .s-form{display:block;background:#fff;color:#1f2026;border-radius:22px;padding:clamp(20px,3vw,40px);box-shadow:0 40px 80px -40px rgba(60,0,15,.6);
-  --s-fg:#1f2026;--s-soft:#62636b;--s-line:rgba(31,32,38,.14);--s-chip:#f3f2ef;--s-accent:#d8002e;--s-accent-fg:#fff}
+  --s-fg:#1f2026;--s-soft:#4a4b52;--s-line:rgba(31,32,38,.14);--s-chip:#f3f2ef;--s-accent:#d8002e;--s-accent-fg:#fff}
 .s-form .s-kind{display:inline-flex;gap:4px;padding:4px;border-radius:999px;background:var(--s-chip);margin-bottom:8px}
 .s-form .s-kind button{border:0;background:transparent;padding:9px 20px}
 .s-form .s-kind button[aria-selected=true]{background:#1f2026;color:#fff}
