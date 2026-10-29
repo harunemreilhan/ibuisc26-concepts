@@ -16,8 +16,11 @@ window.IBUISC = {
   city: "Skopje",
   coords: "41.9981° N, 21.4254° E",
   email: "ibuisc@ibu.edu.mk",
-  // Same n8n webhooks as the IBUISC'25 site (base URL and paths, base64)
-  endpoints: { base: "aHR0cHM6Ly95c25tLnh5eg==", abstract: "L3dlYmhvb2svc3VibWl0LWFic3RyYWN0", fullpaper: "L3dlYmhvb2svc3VibWl0LWZ1bGxwYXBlcg==" },
+  // Google Apps Script web apps (apps-script/Code.gs): the primary account first, the backup only if the primary fails
+  endpoints: [
+    "PASTE_PRIMARY_WEB_APP_URL",
+    "PASTE_BACKUP_WEB_APP_URL"
+  ],
   stats: { abstracts: 66, countries: 16, faculties: 6, days: 2 },
 
   deadlines: [
@@ -237,9 +240,10 @@ window.IBUISC.util = {
     window.IBUISC.scientificBoard.forEach(([n, u, c]) => { if (!m.has(c)) m.set(c, []); m.get(c).push([n, u]); });
     return [...m].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
   },
-  // Sends the submission form to the n8n webhook with the IBUISC'25 payload; type is "abstract" or "fullpaper"
+  // Sends the submission to the Apps Script web app; if the primary does not answer, the same submission goes to the backup.
+  // type is "abstract" or "fullpaper". The reference lets the server recognise a repeated send of the same submission.
   async submit(form, type, file, btn, msg) {
-    const D = window.IBUISC, E = D.endpoints, what = type === "abstract" ? "abstract" : "full paper";
+    const D = window.IBUISC, what = type === "abstract" ? "abstract" : "full paper";
     const say = (t, ok) => { msg.textContent = t; msg.classList.toggle("s-ok", !!ok); };
     if (!form.checkValidity() || !file) return say("Fill in every required field and attach your Word file.");
     if (!/\.docx?$/i.test(file.name)) return say("Attach a Microsoft Word document (.doc or .docx).");
@@ -250,23 +254,27 @@ window.IBUISC.util = {
     btn.disabled = true; btn.textContent = "Sending…"; say("");
     try {
       const b64 = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(",")[1]); r.onerror = rej; r.readAsDataURL(file); });
-      const pre = type === "abstract" ? "abstract" : "full_paper";
-      let h = 0; for (const c of [navigator.userAgent, navigator.language, screen.width + "x" + screen.height, new Date().getTimezoneOffset()].join("|")) h = (h * 31 + c.charCodeAt(0)) | 0;
-      const body = {
-        author_names: f.get("author_names").trim(), faculty: f.get("faculty"), topic: f.get("topic"), email: f.get("email").trim(), phone: f.get("phone").trim(),
-        paper_title: f.get("paper_title").trim(), agreement: f.get("agreement"),
-        [pre + "_file_base64"]: b64, [pre + "_file_name"]: file.name, [pre + "_file_size"]: file.size,
-        security_fingerprint: Math.abs(h).toString(36), security_timestamp: String(Date.now()),
-        security_nonce: Math.random().toString(36).slice(2, 15), security_referrer: document.referrer || "direct"
-      };
-      const r = await fetch(atob(E.base) + atob(E[type]), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-      const j = await r.json().catch(() => ({}));
-      if (!r.ok || !j.success) throw new Error(j.error || "");
-      const id = j.submissionId && !/\{\{|\$\(/.test(j.submissionId) ? ` Submission ID: ${j.submissionId}.` : "";
+      const body = JSON.stringify({
+        type, ref: Date.now().toString(36) + Math.random().toString(36).slice(2, 10),
+        author_names: f.get("author_names").trim(), faculty: f.get("faculty"), topic: f.get("topic"), email: f.get("email").trim(),
+        phone: f.get("phone").trim(), paper_title: f.get("paper_title").trim(), agreement: f.get("agreement"),
+        file_name: file.name, file_base64: b64, website: f.get("website")
+      });
+      let j = null;
+      for (const url of D.endpoints.filter(u => u.startsWith("https://"))) {
+        try {
+          // text/plain keeps this a simple request, which Apps Script accepts from any site
+          const r = await fetch(url, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body, signal: AbortSignal.timeout ? AbortSignal.timeout(60000) : undefined });
+          j = await r.json();
+          if (j.success || !j.retry) break; // a clear answer (even "check your email address") is final; silence or a server fault moves on to the backup
+        } catch (e) { j = null; }
+      }
+      if (!j) throw new Error("");
+      if (!j.success) throw new Error(j.error);
       form.reset(); form.querySelector("select[name=faculty]").dispatchEvent(new Event("change"));
-      say(`Your ${what} is sent.${id} A confirmation email is on its way to ${body.email}.`, true);
+      say(`Your ${what} is sent. Your submission ID is ${j.submissionId}. A confirmation email is on its way to you.`, true);
     } catch (err) {
-      say(`Your ${what} was not sent${err.message && err.name !== "TypeError" ? ` (${err.message})` : ""}. Try again, or email it to ${D.email}.`);
+      say(err.message ? err.message : `Your ${what} could not be sent right now. Try again in a few minutes, or email it to ${D.email}.`);
     } finally { btn.disabled = false; btn.textContent = label; }
   },
   // Wires a faculty <select> to a topic <select>
