@@ -12,12 +12,12 @@ window.IBUISC.site = function (target, opts = {}) {
     agenda: ["Agenda", D.agenda.length ? "Two days in Skopje. Open a session to see who takes part." : "Two days in Skopje, on Wednesday and Thursday."],
     committees: ["Committees", "The people behind IBUISC'26."],
     guidelines: ["Guidelines", D.guidelines.note],
-    submit: ["Submit your work", ""],
+    submit: ["Submit your work", "Submitting your abstract is your application. It takes about two minutes."],
     news: ["Announcements", "News from the congress office."]
   };
   Object.assign(titles, opts.titles || {});
   let n = opts.startN || 0;
-  const head = key => { n++; const [t, p] = titles[key]; return `<div class="s-head"><span class="s-n" aria-hidden="true">${U.pad(n)}</span><h2>${t}</h2>${p ? `<p>${p}</p>` : key === "submit" ? `<p>Upload a Word document, or email it to <a href="mailto:${D.email}">${D.email}</a>.</p>` : ""}</div>`; };
+  const head = key => { n++; const [t, p] = titles[key]; return `<div class="s-head"><span class="s-n" aria-hidden="true">${U.pad(n)}</span><h2>${t}</h2>${p ? `<p>${p}</p>` : ""}</div>`; };
   const person = ([a, b]) => `<li>${esc(a)}<span>${esc(b)}</span></li>`;
 
   const body = {
@@ -30,18 +30,31 @@ window.IBUISC.site = function (target, opts = {}) {
     committees: () => `<div class="s-tabs s-ctabs" id="sCom" aria-label="Committee"></div><div class="s-panel" id="sComP" role="tabpanel"></div>`,
     guidelines: () => { const G = D.guidelines; return `<div class="s-gl">${[G.abstract, G.paper].map(g => `<div class="s-card"><h3>${g.title}</h3><dl>${g.specs.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl></div>`).join("")}
       <div class="s-card s-pub"><div><h3>Publication and proceedings</h3><p>${G.proceedings}</p></div><div><p>${G.journalsIntro}</p><ul>${G.journals.map(([a, nm, f]) => `<li><b>${a}</b><span>${nm}<small>${f}</small></span></li>`).join("")}</ul></div></div></div>`; },
-    submit: () => `<form class="s-card s-form" id="sForm" novalidate>
-      <div class="s-full"><div class="s-tabs s-kind" id="sKind" aria-label="Submission type"></div></div>
-      <div class="s-full"><label for="sAu">Author full name(s)</label><input id="sAu" name="author_names" maxlength="200" autocomplete="name" required><small>For multiple authors, separate with commas</small></div>
-      <div><label for="sFa">Faculty</label><select id="sFa" name="faculty" required></select></div>
-      <div><label for="sTo">Topic of interest</label><select id="sTo" name="topic" required></select></div>
-      <div><label for="sEm">Email address</label><input id="sEm" name="email" type="email" autocomplete="email" required></div>
-      <div><label for="sPh">Phone number</label><input id="sPh" name="phone" type="tel" autocomplete="tel"><small>Optional, with country code</small></div>
-      <div class="s-full"><label for="sTi">Paper title</label><input id="sTi" name="paper_title" maxlength="300" required></div>
-      <div class="s-full"><label for="sFi" id="sFil">Abstract file</label><input id="sFi" type="file" accept=".doc,.docx" required><small>Microsoft Word document only (.doc or .docx), up to 12 MB</small></div>
-      <input class="s-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <label class="s-full s-chk"><input type="checkbox" name="agreement" required> I have read the submission guidelines and understand my submission will be peer reviewed.</label>
-      <div class="s-full"><button class="s-btn" id="sGo" type="submit">Submit abstract</button><span class="s-msg" id="sMsg" role="status"></span></div></form>`,
+    submit: () => `<div class="s-sub">
+      <aside class="s-subinfo" aria-live="polite">
+        <div class="s-sdl"><small id="sDlL"></small><b id="sDlD"></b><div class="s-cd" id="sDlC"></div></div>
+        <ul class="s-need" id="sNeed"></ul>
+        <p class="s-mail">Prefer email? Send the same details and your Word file to <a href="mailto:${D.email}">${D.email}</a>.</p>
+      </aside>
+      <form class="s-form" id="sForm" novalidate>
+        <div class="s-tabs s-kind" id="sKind" aria-label="Submission type"></div>
+        <fieldset><legend><i>1</i>About you</legend>
+          <div class="s-full"><label for="sAu">Author full name(s)</label><input id="sAu" name="author_names" maxlength="200" autocomplete="name" required><small>For multiple authors, separate with commas</small></div>
+          <div><label for="sEm">Email address</label><input id="sEm" name="email" type="email" autocomplete="email" required></div>
+          <div><label for="sPh">Phone number <span>optional</span></label><input id="sPh" name="phone" type="tel" autocomplete="tel" placeholder="+389 …"></div>
+        </fieldset>
+        <fieldset><legend><i>2</i>Your paper</legend>
+          <div><label for="sFa">Faculty</label><select id="sFa" name="faculty" required></select></div>
+          <div><label for="sTo">Topic of interest</label><select id="sTo" name="topic" required></select></div>
+          <div class="s-full"><label for="sTi">Paper title</label><input id="sTi" name="paper_title" maxlength="300" required></div>
+        </fieldset>
+        <fieldset><legend><i>3</i>Your file</legend>
+          <label class="s-full s-drop" id="sDrop"><input id="sFi" type="file" accept=".doc,.docx" required><b id="sFiN">Choose your Word file</b><span>or drop it here · .doc or .docx, up to 12 MB</span></label>
+        </fieldset>
+        <input class="s-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="s-chk"><input type="checkbox" name="agreement" required> I have read the submission guidelines and understand my submission will be peer reviewed.</label>
+        <button class="s-btn" id="sGo" type="submit">Submit abstract</button><p class="s-msg" id="sMsg" role="status"></p>
+      </form></div>`,
     news: () => `<div class="s-news">${D.announcements.map(a => `<article${a.image ? "" : ' class="s-feat"'}>${a.image ? `<img src="../images/${a.image}" alt="${esc(a.title)}" loading="lazy">` : ""}<time>${a.date}</time><h3>${esc(a.title)}</h3><p>${esc(a.body)}</p>${a.link ? `<a href="${a.link}" target="_blank" rel="noopener">${a.linkText}</a>` : ""}</article>`).join("")}</div>`
   };
 
@@ -97,12 +110,26 @@ window.IBUISC.site = function (target, opts = {}) {
   // form
   if (own("submit")) {
     U.bindTopicSelect($("#sFa"), $("#sTo"));
+    // the panel beside the form follows the chosen submission type
+    const kinds = [
+      { dl: "abstract", btn: "Submit abstract", need: [["Your abstract", "Up to 350 words, in English"], ["As a Word file", ".doc or .docx, up to 12 MB"], ["One topic", "From one of the six faculties"]] },
+      { dl: "fullpaper", btn: "Submit full paper", need: [["Your full paper", "3,000–6,000 words, in English"], ["As a Word file", "Times New Roman 12 pt, double-spaced"], ["Same topic", "As your accepted abstract"]] }
+    ];
     let kind = 0;
+    const subTick = () => { const c = U.countdown(D.deadlines.find(d => d.key === kinds[kind].dl).date); $("#sDlC").innerHTML = c.done ? "<span>Closed</span>" : [[c.d, "days"], [U.pad(c.h), "hrs"], [U.pad(c.m), "min"], [U.pad(c.s), "sec"]].map(([v, l]) => `<span>${v}<small>${l}</small></span>`).join(""); };
     U.tabs($("#sKind"), ["Abstract", "Full paper"], i => {
-      kind = i;
-      $("#sFil").textContent = i ? "Full paper file" : "Abstract file";
-      $("#sGo").textContent = i ? "Submit full paper" : "Submit abstract";
+      kind = i; const k = kinds[i], d = D.deadlines.find(x => x.key === k.dl);
+      $("#sDlL").textContent = d.label; $("#sDlD").textContent = d.display;
+      $("#sNeed").innerHTML = k.need.map(([b, t]) => `<li><b>${b}</b><span>${t}</span></li>`).join("");
+      $("#sGo").textContent = k.btn; subTick();
     });
+    setInterval(subTick, 1000);
+    // the file area shows the chosen file's name
+    const fi = $("#sFi"), fiName = () => { $("#sFiN").textContent = fi.files[0] ? fi.files[0].name : "Choose your Word file"; $("#sDrop").classList.toggle("s-has", !!fi.files[0]); };
+    fi.addEventListener("change", fiName);
+    $("#sForm").addEventListener("reset", () => setTimeout(fiName));
+    ["dragenter", "dragover"].forEach(t => fi.addEventListener(t, () => $("#sDrop").classList.add("s-over")));
+    ["dragleave", "drop"].forEach(t => fi.addEventListener(t, () => $("#sDrop").classList.remove("s-over")));
     $("#sForm").onsubmit = e => { e.preventDefault(); U.submit(e.target, kind ? "fullpaper" : "abstract", $("#sFi").files[0], $("#sGo"), $("#sMsg")); };
   }
 
