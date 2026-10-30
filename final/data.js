@@ -18,7 +18,7 @@ window.IBUISC = {
   email: "ibuisc@ibu.edu.mk",
   // Google Apps Script web apps (apps-script/Code.gs): the primary account first, the backup only if the primary fails
   endpoints: [
-    "https://script.google.com/macros/s/AKfycbySY0RKf-2C9xq6zWOK6VzpDyUzii8qbmjm4Z7SE2LkCNTqjNRDcIadluqqFSr6Vhs/exec"  // submission.ibuisc@gmail.com,
+    "https://script.google.com/macros/s/AKfycbySY0RKf-2C9xq6zWOK6VzpDyUzii8qbmjm4Z7SE2LkCNTqjNRDcIadluqqFSr6Vhs/exec", // submission.ibuisc@gmail.com
     "https://script.google.com/macros/s/AKfycbybVbh9W8m-RmrbGjgf49ytbFxx-pvoAPHy0jmM-Zc0iyHRDQ5m_q5XspIWxlhfUMbQ/exec"   // ibuisc.submission@gmail.com
   ],
   stats: { abstracts: 66, countries: 16, faculties: 6, days: 2 },
