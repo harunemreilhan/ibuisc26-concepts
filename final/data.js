@@ -1,6 +1,6 @@
 /* IBUISC'26: all site content in one place.
-   Dates follow the 29 October 2026 meeting. Still to update when the lists arrive from Lejla:
-   faculty subtopics (faculties[].topics) and the organization committee (organization). */
+   Dates and subtopics follow the official Call for Papers (IBUISC 2026). Still to update when it arrives from Lejla:
+   the 2026 organization committee (organization). */
 window.IBUISC = {
   edition: "IBUISC'26",
   year: 2026,
@@ -21,10 +21,11 @@ window.IBUISC = {
     "https://script.google.com/macros/s/AKfycbySY0RKf-2C9xq6zWOK6VzpDyUzii8qbmjm4Z7SE2LkCNTqjNRDcIadluqqFSr6Vhs/exec", // submission.ibuisc@gmail.com
     "https://script.google.com/macros/s/AKfycbybVbh9W8m-RmrbGjgf49ytbFxx-pvoAPHy0jmM-Zc0iyHRDQ5m_q5XspIWxlhfUMbQ/exec"   // ibuisc.submission@gmail.com
   ],
-  stats: { abstracts: 66, countries: 16, faculties: 6, days: 2 },
+  stats: { abstracts: 66, countries: 16, faculties: 5, days: 2 },
 
   deadlines: [
-    { key: "abstract", label: "Abstract submission deadline", date: "2026-11-15T23:59:00", display: "November 15, 2026" },
+    { key: "abstract", label: "Abstract submission deadline", date: "2026-11-21T23:59:00", display: "November 21, 2026" },
+    { key: "notification", label: "Notification of acceptance", date: "2026-11-23T12:00:00", display: "November 23, 2026" },
     { key: "congress", label: "IBUISC'26 Congress", date: "2026-12-02T09:30:00", display: "December 2–3, 2026" },
     { key: "fullpaper", label: "Full paper submission deadline", date: "2026-12-15T23:59:00", display: "December 15, 2026" }
   ],
@@ -103,55 +104,50 @@ window.IBUISC = {
 
   faculties: [
     { code: "FLAW", value: "law", name: "Faculty of Law", short: "Law", topics: [
-      "Regulating Artificial Intelligence: Challenges for Data Protection and Privacy Law",
-      "Sustainable Development and Environmental Law: Legal Tools for Climate-Resilient Policies",
-      "Ethical Dilemmas in AI and the Role of Human Rights Law",
-      "Corporate Responsibility and Sustainability Reporting: From Voluntary Ethics to Legal Obligations",
-      "Intellectual Property Rights in the Age of AI: Ownership and Protection of AI-Generated Innovations",
-      "Artificial Intelligence and the Future of Democratic Governance",
-      "Global Sustainability Policy: Bridging the Gap Between Climate Agreements and National Politics",
-      "Green Politics in the Digital Age: The Role of Political Parties and Movements in Shaping a Sustainable Future",
-      "Geopolitics of Artificial Intelligence: Competing Strategies Between Global Powers",
-      "AI and Democratic Integrity: How Algorithms Impact Elections and Political Discourse"
+      "Who Protects Us When Algorithms Decide? AI and Our Fundamental Rights",
+      "Rules for the Machines: Can the EU’s AI Act Keep Up? Protecting People in the Age of AI",
+      "Whose Planet Is It? Climate Justice and the Generations Still to Come",
+      "When AI Gets It Wrong, Who Pays? Legal Responsibility for Algorithmic Harm",
+      "Human Dignity in a Digital World: What International Law Owes Us in the Age of AI",
+      "Justice by Algorithm? AI in the Courtroom and the Future of a Fair Trial",
+      "Can We Breathe Easy in the Age of AI? The Right to a Healthy Environment and the Cost of Technology"
     ]},
     { code: "FHSS", value: "humanities", name: "Faculty of Humanities and Social Sciences", short: "Humanities", topics: [
-      "AI and Child Development: The Effects of Smart Technologies on Cognitive, Emotional, and Social Growth",
-      "AI in the Workplace: Psychological Impacts on Employee Well-being, Motivation, and Job Identity",
-      "Human-AI Interaction: Cognitive Bias, Trust, and Decision-Making in a Technologically Mediated Environment",
-      "AI in Mental Health Care: Ethical and Therapeutic Implications of Chatbots and Digital Therapists",
-      "AI in Education: Cognitive Load, Motivation, and Learning Outcomes in Intelligent Learning Environments",
-      "AI-Driven Persuasion: Ethical Challenges and Psychological Effects of Algorithmic Messaging in Modern PR and Marketing"
+      "Growing Up in the Age of AI: How Technology Is Shaping Young Minds and Identities",
+      "Human Connection in a Digital World: Are We Becoming More Connected or More Alone?",
+      "Why Do We Know What Is Right but Don’t Always Do It? The Psychology Behind Sustainable Choices",
+      "Human Values in the Age of AI: How Technology Challenges Our Moral Judgments",
+      "The Bystander Effect in a Changing World: Why Do Young People Sometimes Stay Silent in the Face of Social and Environmental Problems?",
+      "Human-AI Collaboration in English Language Education: The Future of Teaching and Assessment",
+      "Digital Literacy in the Age of AI: Critical Evaluation of Online Information and Misinformation",
+      "Sustainability through Language Education: Eco-Literacy, Global Citizenship, and Youth Engagement",
+      "English, Intercultural Communication, and Youth in a Globalized Society",
+      "Future-Ready Skills in English Language Education: Critical Thinking, Creativity, Collaboration, and Communication"
     ]},
     { code: "FEAS", value: "economics", name: "Faculty of Economics and Administrative Sciences", short: "Economics", topics: [
-      "AI-Driven Consumer Behavior & Ethical Digital Transformation in E-Commerce",
-      "Blockchain, AI & Green Logistics: The Triple Revolution in E-Business",
-      "AI and Global Trade: Disruptions, Opportunities, and Ethical Dilemmas",
-      "Digital Colonialism or Development? AI's Role in Global Economic Equity",
-      "AI-Enhanced Decision-Making: Ethical Leadership for a Sustainable Future",
-      "Managing AI-Driven Change: Sustainability as a Strategic Imperative",
-      "Green Fintech and AI: Ethical Innovation for Sustainable Finance",
-      "Algorithmic Bias in Financial Decision-Making: A Threat to Inclusive Growth?"
-    ]},
-    { code: "FEDU", value: "education", name: "Faculty of Education", short: "Education", topics: [
-      "AI-Powered Language Learning Tools",
-      "Exploring Adaptive Learning Platforms and Chatbots",
-      "Combining Text, Video, and AI-Generated Materials Responsibly",
-      "Ethical Implications of AI-Mediated Therapy",
-      "Confidentiality and Data Security in Tele-Counseling Platforms"
+      "Can Digital Business Be Truly Sustainable? The Environmental and Social Impact of E-Commerce",
+      "Financing the Future: Can Green Finance and FinTech Empower the Next Generation?",
+      "Who Pays for the Future? Climate Change, Economic Inequality, and Intergenerational Justice",
+      "When Algorithms Take the Lead: AI, Workplace Fairness, and Employee Autonomy",
+      "The Hidden Cost of Our Meals: Food Consumption, Environmental Impact, and Sustainable Alternatives",
+      "Smart Destinations, Sustainable Futures: Can Technology Make Tourism Better for Visitors and Local Communities?",
+      "Rethinking Healthcare for the Future: AI, Leadership, and Innovation in Healthcare Service Delivery"
     ]},
     { code: "FAD", value: "art", name: "Faculty of Art and Design", short: "Art & Design", topics: [
-      "Post-Human Aesthetics: How AI Shapes the Visual Language of Contemporary Art",
-      "Ethics by Design: AI Tools and the Future of Sustainable Visual Communication",
-      "Smart Textiles and AI: Designing the Future of Sustainable and Ethical Fashion",
-      "AI-Driven Living: Designing Ethical and Sustainable Smart Spaces",
-      "Synthetic Realities: The Ethics of AI in Filmmaking and Visual Storytelling",
-      "Animating the Future: AI-Assisted 2D Animation for Ethical and Sustainable Storytelling"
+      "Artificial Intelligence, Visual Communication, and Sustainable Design Practices",
+      "Sustainable Fashion, Innovative Materials, and AI-Driven Design",
+      "Artificial Intelligence, Digital Art, and Social Engagement",
+      "Sustainable Materials, Smart Spaces, and Future Living Environments",
+      "Artificial Intelligence, Digital Animation, and Audiovisual Storytelling"
     ]},
     { code: "FENG", value: "engineering", name: "Faculty of Engineering", short: "Engineering", topics: [
-      "AI-Driven Edge Computing for Sustainable Smart Cities",
-      "Ethical Decision-Making in AI-Powered Supply Chains",
-      "Federated Learning for Sustainable Data Privacy in IoT Networks",
-      "Ethical and Sustainable Practices in Generative Architectural AI"
+      "Artificial Intelligence and the Future of Human Potential",
+      "Youth, Education, and the Skills of Tomorrow",
+      "Sustainability, Climate Action, and Environmental Innovation",
+      "Smart Cities, Digital Transformation, and Sustainable Development",
+      "Youth Entrepreneurship, Innovation and the Future Economy",
+      "Ethics, Digital Rights, and Responsible Artificial Intelligence",
+      "Youth Leadership, Social Inclusion, and the Future of Society"
     ]}
   ],
 
@@ -165,7 +161,7 @@ window.IBUISC = {
         ["Font", "Times New Roman, 12 pt (title in 14 pt)"],
         ["Line spacing", "1.5"],
         ["Page format", "A4, 1 inch / 2.54 cm margins on all sides"],
-        ["Content", "A clear outline of the theoretical framework, theme, or work in discussion"]
+        ["Content", "A clear outline of the research focus, theoretical framework, and the central theme or issue addressed"]
       ]
     },
     paper: {
@@ -178,13 +174,13 @@ window.IBUISC = {
         ["Content", "A clear outline of the theoretical framework, theme, or work in discussion"]
       ]
     },
-    note: "Submitting your abstract is your application. Accepted authors send the full paper by December 15, after the congress, for the proceedings.",
-    proceedings: "All accepted papers will be published in the IBU International Student Congress Proceedings 2026 with an official ISBN number. The proceedings will be available in both digital and print formats.",
-    journalsIntro: "Based on the congress theme, exceptional papers will be published in special editions of the journals of the respective faculties at International Balkan University:",
+    note: "Submitting your abstract is your application. Please state your faculty and chosen subtopic. Participation is free of charge.",
+    proceedings: "After the congress, authors are invited to submit their full papers by December 15, 2026 for consideration for publication in a special edition of the respective faculty journals.",
+    journalsIntro: "The faculty journals of International Balkan University:",
     journals: [
       ["TEFMJ", "Trends in Economics, Finance and Management", "Faculty of Economics and Administrative Sciences"],
       ["JLP", "Journal of Law and Politics", "Faculty of Law"],
-      ["IJEP", "International Journal of Education and Philology", "Faculty of Education & Faculty of Humanities and Social Sciences"],
+      ["IJEP", "International Journal of Education and Philology", "Faculty of Humanities and Social Sciences"],
       ["IJTNS", "International Journal of Technical and Natural Science", "Faculty of Engineering"],
       ["IJAD", "International Journal of Art and Design", "Faculty of Art and Design"]
     ]
@@ -195,7 +191,7 @@ window.IBUISC = {
   agendaNote: "The two-day programme of keynotes, workshops and sessions is published after the abstract review. Accepted authors also receive it by email.",
 
   announcements: [
-    { date: "November 2, 2026", title: "Call for papers is open", body: "Submit your abstract by November 15, 2026 on a topic from one of the six faculties. Submitting the abstract is your application.", link: "#submit", linkText: "Submit your abstract" },
+    { date: "November 2, 2026", title: "Call for papers is open", body: "Students from all cycles of study, from anywhere in the world, can submit an abstract by November 21, 2026 on a subtopic from one of the five faculties. Participation is free of charge.", link: "#submit", linkText: "Submit your abstract" },
     { date: "March 16, 2026", title: "IBUISC'25 Abstract Book published", body: "The abstract book of last year's congress is published on IBU Press.", image: "ibuisc-2025-abstract-book-cover.png", link: "https://press.ibu.edu.mk/", linkText: "Read on IBU Press" }
   ],
 

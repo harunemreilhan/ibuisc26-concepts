@@ -8,7 +8,7 @@
 <title>IBUISC'26 · Youth at the Crossroads</title>
 <link rel="icon" href="favicon/favicon-32x32.png">
 <link rel="apple-touch-icon" href="favicon/apple-touch-icon.png">
-<link rel="stylesheet" href="site.css?v=202610301317">
+<link rel="stylesheet" href="site.css?v=202610310159">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>
@@ -168,7 +168,7 @@
   </svg>
   <div class="lbl">International Student Congress 2026 · International Balkan University, Skopje</div>
   <h1>Youth at the<br><span>Crossroads.</span></h1>
-  <div class="hint"><span>Artificial Intelligence, Sustainability, and the Future of Society</span><span>Abstracts until November 15</span></div>
+  <div class="hint"><span>Artificial Intelligence, Sustainability, and the Future of Society</span><span>Abstracts until November 21</span></div>
 </section>
 <div class="s-root" id="site"></div>
 <div class="pal" id="pal" role="group" aria-label="Colour palette"><span>Palette</span>
@@ -176,8 +176,8 @@
   <button type="button" data-p="mist"><i style="background:#eef1f5"></i>Mist</button>
   <button type="button" data-p="slate"><i style="background:#30353f"></i>Slate</button>
 </div>
-<script src="data.js?v=202610301317"></script>
-<script src="site.js?v=202610301317"></script>
+<script src="data.js?v=202610310159"></script>
+<script src="site.js?v=202610310159"></script>
 <script>
 const D = IBUISC, U = D.util, esc = U.esc, dl = k => D.deadlines.find(d => d.key === k);
 
@@ -185,12 +185,12 @@ const D = IBUISC, U = D.util, esc = U.esc, dl = k => D.deadlines.find(d => d.key
 const stops = [
   { when: "Start now", title: "Every big idea starts with an abstract.", text: "Up to 350 words in English, as a Word document.", extra: `<a class="btn" href="#guidelines">Read the guidelines</a>` },
   { k: "abstract", title: "Send us your abstract.", text: "Submit it on this website or by email. Submitting the abstract is your application." },
-  { when: "After November 15", title: "The board reviews every application.", text: `Abstract, background and chosen topic. Accepted authors get an email from ${D.email}.` },
+  { k: "notification", title: "Hear back from the board.", text: `The board reviews every abstract and its chosen subtopic. Accepted authors get an email from ${D.email}.` },
   { k: "congress", title: "Take the stage in Skopje.", text: "Wednesday and Thursday at International Balkan University." },
-  { k: "fullpaper", title: "Publish with an ISBN.", text: "After the congress, accepted authors send the full paper for the proceedings." }
+  { k: "fullpaper", title: "Publish in a faculty journal.", text: "After the congress, send your full paper for consideration in a special edition of your faculty's journal." }
 ];
 const dates = n => `<section class="s-sec s-sec-deadlines" id="deadlines"><div class="s-wrap">
-  <div class="s-head"><span class="s-n" aria-hidden="true">${n}</span><h2>Key dates</h2><p>From your first idea to the proceedings, counting down live.</p></div>
+  <div class="s-head"><span class="s-n" aria-hidden="true">${n}</span><h2>Key dates</h2><p>From your first idea to publication, counting down live.</p></div>
   <ol class="route" id="route"><span class="road" aria-hidden="true"><i id="fill"></i><b class="lane" id="lane"></b></span><span class="puck" id="puck" aria-hidden="true"></span>${stops.map(s => {
     const d = s.k && dl(s.k);
     return `<li class="stop"${s.k ? ` data-k="${s.k}"` : ""}><div class="when">${d ? `<small>${d.label}</small>${d.display}` : s.when}</div>

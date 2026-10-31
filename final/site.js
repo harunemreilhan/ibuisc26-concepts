@@ -112,7 +112,7 @@ window.IBUISC.site = function (target, opts = {}) {
     U.bindTopicSelect($("#sFa"), $("#sTo"));
     // the panel beside the form follows the chosen submission type
     const kinds = [
-      { dl: "abstract", btn: "Submit abstract", need: [["Your abstract", "Up to 350 words, in English"], ["As a Word file", ".doc or .docx, up to 12 MB"], ["One topic", "From one of the six faculties"]] },
+      { dl: "abstract", btn: "Submit abstract", need: [["Your abstract", "Up to 350 words, in English"], ["As a Word file", ".doc or .docx, up to 12 MB"], ["One subtopic", "From one of the five faculties"]] },
       { dl: "fullpaper", btn: "Submit full paper", need: [["Your full paper", "3,000–6,000 words, in English"], ["As a Word file", "Times New Roman 12 pt, double-spaced"], ["Same topic", "As your accepted abstract"]] }
     ];
     let kind = 0;
